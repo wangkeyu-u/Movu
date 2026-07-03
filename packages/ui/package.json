@@ -1,0 +1,10 @@
+{
+  "name": "@movu/ui",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/components/index.ts",
+    "./styles.css": "./src/styles.css"
+  }
+}

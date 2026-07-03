@@ -1,0 +1,78 @@
+services:
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: movu_carpooling
+      MYSQL_USER: movu
+      MYSQL_PASSWORD: ${MOVU_DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MOVU_ROOT_DB_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+    restart: unless-stopped
+    environment:
+      ENVIRONMENT: production
+      DATABASE_URL: mysql+pymysql://movu:${MOVU_DB_PASSWORD}@mysql:3306/movu_carpooling
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      CORS_ORIGINS: ${CORS_ORIGINS}
+      FRONTEND_BASE_URL: ${FRONTEND_BASE_URL}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USERNAME: ${SMTP_USERNAME}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      SMTP_FROM_EMAIL: ${SMTP_FROM_EMAIL}
+      SMTP_USE_TLS: ${SMTP_USE_TLS}
+      OSRM_BASE_URL: ${OSRM_BASE_URL}
+      SERVICE_AREA_CENTER_LATITUDE: ${SERVICE_AREA_CENTER_LATITUDE}
+      SERVICE_AREA_CENTER_LONGITUDE: ${SERVICE_AREA_CENTER_LONGITUDE}
+      SERVICE_AREA_RADIUS_KM: ${SERVICE_AREA_RADIUS_KM}
+      RATE_LIMIT_REQUESTS: ${RATE_LIMIT_REQUESTS}
+      RATE_LIMIT_WINDOW_SECONDS: ${RATE_LIMIT_WINDOW_SECONDS}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=5)"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  admin-dashboard:
+    build:
+      context: .
+      dockerfile: admin-dashboard/Dockerfile
+      args:
+        VITE_API_BASE_URL: ${PUBLIC_API_BASE_URL}
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${ADMIN_DASHBOARD_PORT:-5173}:80"
+
+  user-app:
+    build:
+      context: .
+      dockerfile: user-app/Dockerfile
+      args:
+        VITE_API_BASE_URL: ${PUBLIC_API_BASE_URL}
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${USER_APP_PORT:-5174}:80"
+
+volumes:
+  mysql_data:

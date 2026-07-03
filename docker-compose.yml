@@ -1,0 +1,64 @@
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: movu_carpooling
+      MYSQL_USER: movu
+      MYSQL_PASSWORD: movu_password
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+    environment:
+      DATABASE_URL: mysql+pymysql://movu:movu_password@mysql:3306/movu_carpooling
+      JWT_SECRET_KEY: movu-local-development-secret
+      ENVIRONMENT: docker
+      FRONTEND_BASE_URL: http://localhost:5174
+      CORS_ORIGINS: http://localhost:5173,http://localhost:5174,http://127.0.0.1:5173,http://127.0.0.1:5174,http://127.0.0.1:6173,http://127.0.0.1:6174
+    ports:
+      - "8000:8000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=5)"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  admin-dashboard:
+    build:
+      context: .
+      dockerfile: admin-dashboard/Dockerfile
+      args:
+        VITE_API_BASE_URL: http://localhost:8000/api
+    ports:
+      - "5173:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  user-app:
+    build:
+      context: .
+      dockerfile: user-app/Dockerfile
+      args:
+        VITE_API_BASE_URL: http://localhost:8000/api
+    ports:
+      - "5174:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  mysql_data:

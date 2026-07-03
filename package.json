@@ -1,0 +1,15 @@
+{
+  "name": "movu",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "ui:check": "node scripts/check-ui-usage.mjs",
+    "e2e": "playwright test",
+    "e2e:headed": "playwright test --headed",
+    "e2e:install": "playwright install chromium"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.61.1"
+  }
+}

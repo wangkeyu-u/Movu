@@ -1,0 +1,17 @@
+{
+  "name": "MovU Carpooling",
+  "short_name": "MovU",
+  "description": "Verified campus carpooling around Taylor's University.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#111111",
+  "icons": [
+    {
+      "src": "/movu-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
