@@ -1,0 +1,188 @@
+{
+  "app": {
+    "name": "MovU Admin",
+    "subtitle": "Campus mobility operations"
+  },
+  "common": {
+    "loading": "Loading",
+    "error": "Something went wrong",
+    "retry": "Retry",
+    "logout": "Log out",
+    "approve": "Approve",
+    "reject": "Reject",
+    "ban": "Ban",
+    "unban": "Unban",
+    "review": "Review",
+    "resolve": "Resolve",
+    "falseAlarm": "False alarm",
+    "empty": "No records yet",
+    "emptyValue": "Not set",
+    "actions": "Actions",
+    "status": "Status",
+    "createdAt": "Created",
+    "language": "Language",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "login": {
+    "title": "Admin login",
+    "subtitle": "Manage verification, trips, safety alerts, and reports.",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign in",
+    "adminOnly": "Only admin accounts can access this dashboard."
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "users": "Users",
+    "vehicles": "Vehicles",
+    "rideRequests": "Ride Requests",
+    "trips": "Trips",
+    "matches": "Matches",
+    "payments": "Payments",
+    "sos": "SOS Events",
+    "reports": "Ratings & Reports"
+    ,
+    "audit": "Audit Logs"
+  },
+  "dashboard": {
+    "title": "Operations overview",
+    "subtitle": "A live snapshot of MovU campus carpool activity.",
+    "users": "Users",
+    "vehicles": "Vehicles",
+    "requests": "Requests",
+    "trips": "Trips",
+    "matches": "Matches",
+    "payments": "Payments",
+    "sos": "SOS",
+    "reports": "Reports",
+    "attention": "Needs attention",
+    "attentionCopy": "Pending users, vehicle approvals, new SOS events, and unresolved reports."
+  },
+  "users": {
+    "title": "Users",
+    "subtitle": "Verify campus accounts and manage access.",
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "rating": "Rating",
+    "emailVerified": "Email verified",
+    "verification": "Verification",
+    "banned": "Banned"
+  },
+  "vehicles": {
+    "title": "Vehicles",
+    "subtitle": "Review driver vehicle applications.",
+    "plate": "Plate",
+    "model": "Model",
+    "driver": "Driver",
+    "seats": "Seats",
+    "verification": "Verification"
+  },
+  "rideRequests": {
+    "title": "Ride requests",
+    "subtitle": "Monitor rider demand and request status.",
+    "rider": "Rider",
+    "origin": "Origin",
+    "destination": "Destination",
+    "time": "Preferred time",
+    "passengers": "Passengers",
+    "gender": "Gender preference",
+    "distance": "Distance"
+  },
+  "trips": {
+    "title": "Trips",
+    "subtitle": "Track posted, ongoing, completed, and cancelled trips.",
+    "driver": "Driver",
+    "origin": "Origin",
+    "destination": "Destination",
+    "time": "Departure",
+    "seats": "Seats"
+  },
+  "matches": {
+    "title": "Matches",
+    "subtitle": "Review recommended and confirmed rider-driver matches.",
+    "trip": "Trip",
+    "request": "Request",
+    "rider": "Rider",
+    "score": "Score"
+  },
+  "payments": {
+    "title": "Payments",
+    "subtitle": "Payment collection is disabled until a production provider is configured.",
+    "match": "Match",
+    "payer": "Payer",
+    "amount": "Amount",
+    "method": "Method"
+  },
+  "sos": {
+    "title": "SOS events",
+    "subtitle": "Respond to safety alerts from active trips.",
+    "user": "User",
+    "trip": "Trip",
+    "location": "Location",
+    "triggered": "Triggered",
+    "resolved": "Resolved"
+  },
+  "reports": {
+    "title": "Ratings and reports",
+    "subtitle": "Review feedback, ratings, and safety reports.",
+    "from": "From",
+    "to": "To",
+    "trip": "Trip",
+    "score": "Score",
+    "type": "Type",
+    "comment": "Comment"
+  },
+  "audit": {
+    "title": "Audit logs",
+    "subtitle": "Review administrator actions and security-sensitive changes.",
+    "actor": "Actor",
+    "action": "Action",
+    "entity": "Entity",
+    "ip": "IP address",
+    "metadata": "Metadata"
+  },
+  "status": {
+    "pending": "Pending",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "posted": "Posted",
+    "matched": "Matched",
+    "ongoing": "Ongoing",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "full": "Full",
+    "recommended": "Recommended",
+    "confirmed": "Confirmed",
+    "paid": "Paid",
+    "failed": "Failed",
+    "refunded": "Refunded",
+    "new": "New",
+    "reviewing": "Reviewing",
+    "resolved": "Resolved",
+    "false_alarm": "False alarm",
+    "true": "Yes",
+    "false": "No"
+  },
+  "paymentMethods": {
+    "simulated_ewallet": "Local test payment"
+  },
+  "reportTypes": {
+    "late": "Late",
+    "unsafe": "Unsafe",
+    "rude": "Rude",
+    "fake_account": "Fake account",
+    "payment_issue": "Payment issue",
+    "other": "Other"
+  },
+  "genderPreference": {
+    "none": "No preference",
+    "same_gender": "Same gender"
+  },
+  "roles": {
+    "rider": "Rider",
+    "driver": "Driver",
+    "admin": "Admin"
+  }
+}

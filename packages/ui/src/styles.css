@@ -1,0 +1,244 @@
+.ui-button {
+  position: relative;
+  overflow: hidden;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 12px;
+  padding: 0 14px;
+  font: inherit;
+  font-weight: 850;
+  border: 0;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, white 25%, transparent),
+    0 8px 18px color-mix(in oklch, var(--ink, black) 8%, transparent);
+  transition:
+    transform 220ms var(--ease-apple, ease),
+    box-shadow 220ms var(--ease-apple, ease),
+    background-color 220ms var(--ease-apple, ease),
+    border-color 220ms var(--ease-apple, ease);
+  transform: translateZ(0);
+}
+
+.ui-button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(145deg, color-mix(in oklch, white 28%, transparent), transparent 44%);
+  opacity: 0.5;
+}
+
+.ui-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.ui-button:active {
+  transform: translateY(1px) scale(0.985);
+  box-shadow:
+    inset 0 2px 8px color-mix(in oklch, black 12%, transparent),
+    0 4px 10px color-mix(in oklch, var(--ink, black) 8%, transparent);
+}
+
+@media (hover: hover) {
+  .ui-button:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow:
+      inset 0 1px 0 color-mix(in oklch, white 34%, transparent),
+      0 13px 28px color-mix(in oklch, var(--ink, black) 12%, transparent);
+  }
+}
+
+.ui-button-primary {
+  background: var(--primary-strong, var(--primary));
+  color: white;
+}
+
+.ui-button-secondary {
+  background: var(--ink);
+  color: white;
+}
+
+.ui-button-ghost,
+.ui-button-icon {
+  background: white;
+  color: var(--ink);
+  border: 1px solid color-mix(in oklch, var(--soft) 70%, transparent);
+}
+
+.ui-button-danger {
+  background: var(--negative);
+  color: white;
+}
+
+.ui-button-icon {
+  width: 38px;
+  height: 38px;
+  min-height: 38px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+}
+
+.ui-button-wide {
+  width: 100%;
+}
+
+.ui-card {
+  width: 100%;
+  border: 1px solid color-mix(in oklch, var(--soft) 70%, transparent);
+  background: color-mix(in oklch, white 90%, var(--surface));
+  border-radius: var(--radius);
+}
+
+.ui-card-strong {
+  background: white;
+}
+
+.ui-card-dark {
+  background: var(--ink);
+  color: white;
+  border-color: transparent;
+}
+
+.ui-card-accent {
+  background: color-mix(in oklch, var(--primary) 12%, white);
+}
+
+.ui-input {
+  min-height: 44px;
+  width: 100%;
+  border: 1px solid color-mix(in oklch, var(--soft) 75%, transparent);
+  border-radius: 12px;
+  background: white;
+  color: var(--ink);
+  padding: 0 12px;
+  outline: none;
+  font: inherit;
+  box-shadow: inset 0 1px 2px color-mix(in oklch, var(--ink, black) 5%, transparent);
+  transition:
+    border-color 200ms var(--ease-apple, ease),
+    box-shadow 200ms var(--ease-apple, ease),
+    transform 200ms var(--ease-apple, ease);
+}
+
+.ui-input:focus {
+  border-color: var(--primary);
+  box-shadow:
+    0 0 0 3px color-mix(in oklch, var(--primary) 18%, transparent),
+    0 8px 18px color-mix(in oklch, var(--primary) 9%, transparent);
+  transform: translateY(-1px);
+}
+
+.ui-alert {
+  margin: 0;
+  border-radius: 12px;
+  padding: 11px 12px;
+  font-weight: 760;
+}
+
+.ui-alert-error {
+  background: color-mix(in oklch, var(--negative) 12%, white);
+  color: color-mix(in oklch, var(--negative) 70%, black);
+}
+
+.ui-alert-success {
+  background: color-mix(in oklch, var(--positive) 13%, white);
+  color: color-mix(in oklch, var(--positive) 65%, black);
+}
+
+.ui-alert-warning {
+  background: color-mix(in oklch, var(--warning) 20%, white);
+  color: color-mix(in oklch, var(--warning) 48%, black);
+}
+
+.ui-alert-info {
+  background: color-mix(in oklch, var(--info) 12%, white);
+  color: color-mix(in oklch, var(--info) 65%, black);
+}
+
+.ui-badge {
+  width: fit-content;
+  min-height: 25px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0 9px;
+  font-size: 0.75rem;
+  font-weight: 860;
+  background: var(--surface-strong);
+  color: var(--ink);
+}
+
+.ui-badge-positive {
+  background: color-mix(in oklch, var(--positive) 15%, white);
+  color: color-mix(in oklch, var(--positive) 62%, black);
+}
+
+.ui-badge-negative {
+  background: color-mix(in oklch, var(--negative) 13%, white);
+  color: color-mix(in oklch, var(--negative) 66%, black);
+}
+
+.ui-badge-warning {
+  background: color-mix(in oklch, var(--warning) 20%, white);
+  color: color-mix(in oklch, var(--warning) 48%, black);
+}
+
+.ui-badge-info {
+  background: color-mix(in oklch, var(--info) 13%, white);
+  color: color-mix(in oklch, var(--info) 62%, black);
+}
+
+.ui-tabs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: 4px;
+  padding: 4px;
+  border-radius: 13px;
+  background: var(--surface-strong);
+  box-shadow:
+    inset 0 1px 3px color-mix(in oklch, var(--ink, black) 8%, transparent),
+    inset 0 -1px 0 color-mix(in oklch, white 70%, transparent);
+}
+
+.ui-tab-button {
+  min-height: 38px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    transform 220ms var(--ease-apple, ease),
+    background-color 220ms var(--ease-apple, ease),
+    color 220ms var(--ease-apple, ease),
+    box-shadow 220ms var(--ease-apple, ease);
+}
+
+.ui-tab-button.active {
+  background: white;
+  color: var(--ink);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px color-mix(in oklch, var(--ink) 10%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-button,
+  .ui-input,
+  .ui-tab-button {
+    transition-duration: 0.01ms;
+  }
+
+  .ui-button:hover:not(:disabled),
+  .ui-input:focus,
+  .ui-tab-button.active {
+    transform: none;
+  }
+}
