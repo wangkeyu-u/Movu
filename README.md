@@ -1,6 +1,10 @@
 # MovU Carpooling
 
-MovU is a production-ready campus carpooling platform for Taylor's University students and staff. It supports email-verified campus users, rider-driver matching, vehicle verification, route-distance calculation, live location tracking, SOS safety alerts, ratings, reports, audit logs, and an admin dashboard.
+![MovU hero](docs/assets/readme-hero.png)
+
+Campus carpooling for Taylor's University. MovU verifies riders and drivers, matches routes, tracks live trips, handles SOS alerts, and gives admins the tools to keep the service safe.
+
+**Built for:** student mobility, driver-rider matching, vehicle approval, live location, safety workflows, admin operations.
 
 ## Tech Stack
 
