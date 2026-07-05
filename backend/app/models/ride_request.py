@@ -20,6 +20,7 @@ class RideRequest(Base):
     destination_latitude: Mapped[float] = mapped_column(Float, nullable=True)
     destination_longitude: Mapped[float] = mapped_column(Float, nullable=True)
     preferred_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, index=True)
+    preferred_time_timezone: Mapped[str] = mapped_column(String(64), nullable=False, default="Asia/Kuala_Lumpur")
     passenger_count: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     gender_preference: Mapped[GenderPreference] = mapped_column(
         Enum(GenderPreference),

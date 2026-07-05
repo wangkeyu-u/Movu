@@ -1,4 +1,4 @@
-import type { AuthResponse, Match, RatingReport, RideRequest, SOSEvent, Trip, User, Vehicle } from "./types";
+import type { AuthResponse, LocationLog, Match, RatingReport, RideRequest, SOSEvent, Trip, TripMessage, TripNetwork, User, Vehicle } from "./types";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:8000/api";
 const TOKEN_KEY = "movu_user_token";
@@ -25,6 +25,16 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     throw new Error(body.detail || `Request failed with ${response.status}`);
   }
   return response.json() as Promise<T>;
+}
+
+export function locationSocketUrl(tripId: number): string | null {
+  const token = authToken.get();
+  if (!token) return null;
+  const url = new URL(API_BASE_URL);
+  url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
+  url.pathname = `${url.pathname.replace(/\/api\/?$/, "")}/ws/locations/${tripId}`;
+  url.search = `token=${encodeURIComponent(token)}`;
+  return url.toString();
 }
 
 export const api = {
@@ -74,6 +84,7 @@ export const api = {
       body: JSON.stringify(payload)
     }),
   requestRecommendations: (requestId: number) => request<Match[]>(`/matches/ride-requests/${requestId}/recommendations`),
+  autoAssignRequest: (requestId: number) => request<Match>(`/matches/ride-requests/${requestId}/auto-assign`, { method: "POST" }),
   tripRecommendations: (tripId: number) => request<Match[]>(`/matches/trips/${tripId}/recommendations`),
   confirmMatch: (matchId: number) => request<Match>(`/matches/${matchId}/confirm`, { method: "POST" }),
   rejectMatch: (matchId: number) => request<Match>(`/matches/${matchId}/reject`, { method: "POST" }),
@@ -82,6 +93,15 @@ export const api = {
       method: "POST",
       body: JSON.stringify(payload)
     }),
+  latestTripLocation: (tripId: number) => request<LocationLog>(`/locations/trips/${tripId}/latest`),
+  networkTrips: () => request<TripNetwork[]>("/network/me/trips"),
+  tripMessages: (tripId: number) => request<TripMessage[]>(`/network/trips/${tripId}/messages`),
+  sendTripMessage: (tripId: number, body: string) =>
+    request<TripMessage>(`/network/trips/${tripId}/messages`, {
+      method: "POST",
+      body: JSON.stringify({ body })
+    }),
+  currentSafetyTrip: () => request<Trip>("/sos/current-trip"),
   triggerSos: (payload: Record<string, unknown>) =>
     request<SOSEvent>("/sos", {
       method: "POST",

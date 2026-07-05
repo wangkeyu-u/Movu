@@ -4,12 +4,14 @@ from sqlalchemy.orm import Session
 from app.core.dependencies import get_current_user, require_approved_user, require_roles
 from app.core.security import decode_access_token
 from app.db.session import get_db
-from app.models.enums import SOSStatus, TripStatus, UserRole
+from app.models.enums import MatchStatus, SOSStatus, TripStatus, UserRole
+from app.models.match import RideMatch
 from app.models.sos_event import SOSEvent
 from app.models.trip import Trip
 from app.models.user import User
 from app.models.time import utc_now
 from app.schemas.sos import SOSCreate, SOSRead, SOSStatusUpdate
+from app.schemas.trip import TripRead
 from app.services.location import user_can_view_trip_location
 from app.services.realtime import sos_alert_manager
 from app.services.audit import write_audit_log
@@ -17,6 +19,42 @@ from app.services.audit import write_audit_log
 
 router = APIRouter(prefix="/sos", tags=["sos"])
 ws_router = APIRouter(tags=["sos websocket"])
+
+SAFETY_TRIP_STATUSES = {TripStatus.ongoing, TripStatus.matched, TripStatus.completed}
+
+
+def _safety_trip_rank(trip: Trip) -> tuple[int, object]:
+    status_rank = {
+        TripStatus.ongoing: 0,
+        TripStatus.matched: 1,
+        TripStatus.completed: 2,
+    }.get(trip.status, 9)
+    return status_rank, -trip.departure_time.timestamp()
+
+
+def _current_safety_trip(db: Session, user: User) -> Trip | None:
+    if user.role == UserRole.driver:
+        trips = (
+            db.query(Trip)
+            .filter(Trip.driver_id == user.user_id, Trip.status.in_(SAFETY_TRIP_STATUSES))
+            .all()
+        )
+    elif user.role == UserRole.rider:
+        trips = (
+            db.query(Trip)
+            .join(RideMatch, RideMatch.trip_id == Trip.trip_id)
+            .filter(
+                RideMatch.rider_id == user.user_id,
+                RideMatch.status == MatchStatus.confirmed,
+                Trip.status.in_(SAFETY_TRIP_STATUSES),
+            )
+            .all()
+        )
+    else:
+        trips = []
+    if not trips:
+        return None
+    return sorted(trips, key=_safety_trip_rank)[0]
 
 
 def _authenticate_ws_admin(token: str | None, db: Session) -> User | None:
@@ -44,8 +82,8 @@ async def create_sos_event(
     trip = db.get(Trip, payload.trip_id)
     if trip is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Trip not found")
-    if trip.status != TripStatus.ongoing:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Trip must be ongoing")
+    if trip.status not in SAFETY_TRIP_STATUSES:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No active or recent trip found")
     if not user_can_view_trip_location(db, current_user, trip):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Insufficient role")
 
@@ -62,6 +100,17 @@ async def create_sos_event(
 
     await sos_alert_manager.broadcast(SOSRead.model_validate(sos_event).model_dump(mode="json"))
     return sos_event
+
+
+@router.get("/current-trip", response_model=TripRead)
+def read_current_safety_trip(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_approved_user),
+) -> Trip:
+    trip = _current_safety_trip(db, current_user)
+    if trip is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No active or recent trip found")
+    return trip
 
 
 @router.get("/me", response_model=list[SOSRead])

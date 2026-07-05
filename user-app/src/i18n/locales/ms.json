@@ -45,6 +45,9 @@
     "ride": "Naik",
     "drive": "Pandu",
     "safety": "Keselamatan",
+    "activity": "Aktiviti",
+    "trips": "Perjalanan",
+    "garage": "Garaj",
     "account": "Akaun"
   },
   "status": {
@@ -65,7 +68,8 @@
     "confirmed": "Disahkan",
     "reviewing": "Dalam semakan",
     "resolved": "Diselesaikan",
-    "false_alarm": "Amaran palsu"
+    "false_alarm": "Amaran palsu",
+    "driver": "Pemandu sahaja"
   },
   "roles": {
     "admin": "Admin",
@@ -88,10 +92,19 @@
     "banned": {
       "title": "Akaun anda disekat",
       "body": "Tindakan MovU dikunci untuk akaun ini. Hubungi admin MovU untuk bantuan."
+    },
+    "driver_only": {
+      "title": "Alat pemandu memerlukan akaun pemandu",
+      "body": "Tukar kepada akaun pemandu untuk mendaftar kenderaan, menghantar perjalanan dan mengurus cadangan penumpang."
     }
   },
   "auth": {
     "hero": "Carpool disahkan dalam 30km dari Taylor's University.",
+    "driverHero": "Pengurusan pemandu, ambil penumpang, chat dan lokasi langsung untuk carpool Taylor's.",
+    "studentPortal": "Pelajar",
+    "driverPortal": "Pemandu",
+    "studentLoginNote": "Akaun pelajar meminta perjalanan, menerima pemandu yang ditetapkan sistem, chat dan melihat lokasi langsung pemandu.",
+    "driverLoginNote": "Akaun pemandu mengurus kenderaan, menerima penumpang ditetapkan, berkongsi lokasi dan chat.",
     "mode": "Mod pengesahan",
     "signIn": "Log masuk",
     "fullName": "Nama penuh",
@@ -115,6 +128,7 @@
     "intro": "Rancang perjalanan kampus yang disahkan dalam kawasan 30km Taylor's University.",
     "requestRide": "Minta perjalanan",
     "postTrip": "Hantar perjalanan",
+    "rideActivity": "Aktiviti perjalanan",
     "safetyTools": "Alat keselamatan",
     "serviceTitle": "Kawasan kampus 30km",
     "serviceBody": "Asal dan destinasi disahkan berdasarkan Taylor's Lakeside Campus sebelum perjalanan dicipta.",
@@ -129,6 +143,10 @@
   },
   "ride": {
     "title": "Minta perjalanan",
+    "heroLabel": "Aliran penumpang",
+    "workflow": "Aliran perjalanan",
+    "bookTab": "Tempah",
+    "activityTab": "Aktiviti",
     "subtitle": "Pilih kedua-dua titik dalam kawasan 30km Taylor's. Jarak laluan dikira oleh API.",
     "preferredTime": "Masa pilihan",
     "passengers": "Penumpang",
@@ -142,12 +160,18 @@
     "createFailed": "Tidak dapat mencipta permintaan",
     "loadFailed": "Tidak dapat memuatkan padanan",
     "confirmed": "Padanan disahkan.",
+    "assigned": "Sistem menetapkan perjalanan #{{tripId}}.",
     "distancePending": "Jarak belum dikira",
     "findMatches": "Cari padanan",
     "tripNumber": "Perjalanan #{{id}}"
   },
   "drive": {
     "title": "Pandu",
+    "heroLabel": "Aliran pemandu",
+    "workflow": "Aliran pemandu",
+    "tripTab": "Perjalanan",
+    "garageTab": "Garaj",
+    "tripsTab": "Rekod",
     "subtitle": "Daftar kenderaan, tunggu kelulusan, kemudian hantar perjalanan dalam kawasan Taylor's.",
     "vehicles": "Kenderaan",
     "plateNumber": "Nombor plat",
@@ -161,7 +185,40 @@
     "myTrips": "Perjalanan saya",
     "riderMatches": "Padanan penumpang",
     "requestNumber": "Permintaan #{{id}}",
-    "matchRejected": "Padanan ditolak."
+    "matchRejected": "Padanan ditolak.",
+    "startTrip": "Mula ambil",
+    "completeTrip": "Selesaikan perjalanan",
+    "tripStarted": "Perjalanan bermula. Penumpang kini boleh melihat lokasi pemandu.",
+    "tripCompleted": "Perjalanan selesai.",
+    "tripCancelled": "Perjalanan dibatalkan."
+  },
+  "match": {
+    "recommended": "Padanan disyorkan",
+    "scores": {
+      "route_alignment_score": "kesesuaian laluan",
+      "route_order_score": "susunan ambil",
+      "passenger_convenience_score": "mudah penumpang",
+      "driver_detour_score": "lencongan pemandu"
+    }
+  },
+  "network": {
+    "title": "Rangkaian perjalanan",
+    "driverLocation": "Lokasi langsung pemandu",
+    "locationPending": "Menunggu lokasi pemandu",
+    "messages": "Mesej perjalanan",
+    "emptyMessages": "Belum ada mesej",
+    "messagePlaceholder": "Mesej pemandu atau penumpang",
+    "sendMessage": "Hantar mesej",
+    "noVehicle": "Tiada maklumat kenderaan",
+    "passengers": "Penumpang",
+    "noPassengers": "Belum ada penumpang",
+    "seatsAvailable": "tempat kosong",
+    "shareLocation": "Kongsi sekali",
+    "startLiveSharing": "Mula kongsi langsung",
+    "stopLiveSharing": "Henti kongsi",
+    "liveSharingOn": "Perkongsian lokasi langsung dihidupkan.",
+    "locating": "Mengesan lokasi",
+    "locationShared": "Lokasi langsung disegerakkan."
   },
   "map": {
     "target": "Sasaran lokasi",
@@ -172,14 +229,22 @@
     "currentLocation": "Lokasi semasa",
     "droppedPin": "Pin diletakkan",
     "readFailed": "Tidak dapat membaca lokasi semasa.",
-    "chooseOnMap": "Pilih pada peta"
+    "chooseOnMap": "Pilih pada peta",
+    "routePresets": "Laluan tetap"
   },
   "safety": {
     "label": "Keselamatan",
-    "title": "Kongsi lokasi apabila perjalanan aktif.",
-    "subtitle": "Amaran SOS dihantar kepada admin bersama ID perjalanan dan koordinat anda.",
+    "title": "SOS mesti boleh dibuat dengan satu sentuhan.",
+    "subtitle": "MovU mencari perjalanan semasa atau terkini, mengambil lokasi langsung anda, kemudian meminta pengesahan panggilan kecemasan.",
     "shareLocation": "Kongsi lokasi",
     "sendSos": "Hantar SOS",
+    "locating": "Mengesan lokasi",
+    "currentTrip": "Perjalanan keselamatan semasa",
+    "findingTrip": "Mencari perjalanan semasa",
+    "noActiveTrip": "Tiada perjalanan aktif atau terkini",
+    "confirmTitle": "Sahkan panggilan SOS",
+    "confirmBody": "Admin akan menerima amaran kecemasan untuk perjalanan #{{tripId}} bersama koordinat langsung anda.",
+    "confirmCall": "Sahkan panggilan kecemasan",
     "locationShared": "Lokasi dikongsi dengan perjalanan.",
     "sosSent": "SOS dihantar kepada admin.",
     "activeTrips": "Rujukan perjalanan aktif",

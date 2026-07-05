@@ -1,22 +1,29 @@
 import { Button } from "@movu/ui";
-import { Bell, Car, Home, LifeBuoy, LogOut, Route, UserRound } from "lucide-react";
+import { Bell, Clock3, Home, LogOut, ParkingCircle, Route, UserRound } from "lucide-react";
+import type { CSSProperties } from "react";
 import { useTranslation } from "react-i18next";
 import { NavLink, Outlet } from "react-router-dom";
 
 import { LanguageSwitcher } from "../components/LanguageSwitcher";
 import { useAuth } from "./AuthProvider";
 
-const navItems = [
+const riderNavItems = [
   { to: "/", labelKey: "nav.home", icon: Home },
-  { to: "/ride", labelKey: "nav.ride", icon: Route },
-  { to: "/drive", labelKey: "nav.drive", icon: Car },
-  { to: "/safety", labelKey: "nav.safety", icon: LifeBuoy },
+  { to: "/ride/activity", labelKey: "nav.activity", icon: Clock3 },
+  { to: "/account", labelKey: "nav.account", icon: UserRound }
+];
+
+const driverNavItems = [
+  { to: "/", labelKey: "nav.home", icon: Home },
+  { to: "/driver/trips", labelKey: "nav.trips", icon: Route },
+  { to: "/driver/garage", labelKey: "nav.garage", icon: ParkingCircle },
   { to: "/account", labelKey: "nav.account", icon: UserRound }
 ];
 
 export function AppLayout() {
   const { user, logout } = useAuth();
   const { t } = useTranslation();
+  const navItems = user?.role === "driver" ? driverNavItems : riderNavItems;
 
   return (
     <div className="mobile-frame">
@@ -43,7 +50,7 @@ export function AppLayout() {
         <Outlet />
       </main>
 
-      <nav className="bottom-nav" aria-label={t("nav.primary")}>
+      <nav className="bottom-nav" style={{ "--nav-count": navItems.length } as CSSProperties} aria-label={t("nav.primary")}>
         {navItems.map((item) => {
           const Icon = item.icon;
           return (

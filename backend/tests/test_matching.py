@@ -15,6 +15,7 @@ from app.services.matching import (
     calculate_final_match_score,
     calculate_passenger_convenience_score,
     calculate_route_alignment_score,
+    calculate_route_order_score,
     evaluate_match_candidate,
     estimate_route_insertion,
 )
@@ -297,6 +298,29 @@ def test_route_alignment_scores_same_direction_and_rejects_opposite_direction(db
     assert evaluation.reject_reason == "opposite_direction"
 
 
+def test_route_order_scores_pickup_before_dropoff():
+    ordered = estimate_route_insertion(
+        RouteCoordinates(
+            driver_origin=(3.0640, 101.6000),
+            driver_destination=(3.0640, 101.6600),
+            passenger_pickup=(3.0642, 101.6200),
+            passenger_dropoff=(3.0642, 101.6400),
+        )
+    )
+    reversed_order = estimate_route_insertion(
+        RouteCoordinates(
+            driver_origin=(3.0640, 101.6000),
+            driver_destination=(3.0640, 101.6600),
+            passenger_pickup=(3.0642, 101.6400),
+            passenger_dropoff=(3.0642, 101.6200),
+        )
+    )
+
+    assert calculate_route_order_score(0.8, 0.2) == 0
+    assert ordered.route_order_score > 0.9
+    assert reversed_order.route_order_score == 0
+
+
 def test_detour_constraint_allows_small_detour_and_rejects_large_detour(db_session: Session):
     rider = create_rider(db_session)
     ride_request = create_request(
@@ -562,6 +586,94 @@ def test_confirm_match_updates_request_trip_and_full_status(client, db_session: 
     assert ride_request.status == RideRequestStatus.matched
     assert trip.available_seats == 0
     assert trip.status == TripStatus.full
+
+
+def test_auto_assign_confirms_best_available_trip(client, db_session: Session):
+    rider = create_rider(db_session)
+    ride_request = create_request(
+        db_session,
+        rider,
+        passenger_count=2,
+        origin_latitude=3.0646,
+        origin_longitude=101.6162,
+        destination_latitude=3.0738,
+        destination_longitude=101.607,
+    )
+    close_driver = create_driver(db_session, index=31, rating=4.9)
+    farther_driver = create_driver(db_session, index=32, rating=4.9)
+    close_trip = create_trip(
+        db_session,
+        close_driver,
+        available_seats=4,
+        departure_time=ride_request.preferred_time,
+        origin_latitude=3.0648,
+        origin_longitude=101.6164,
+        destination_latitude=3.0738,
+        destination_longitude=101.607,
+    )
+    create_trip(
+        db_session,
+        farther_driver,
+        available_seats=4,
+        departure_time=ride_request.preferred_time,
+        origin_latitude=3.09,
+        origin_longitude=101.64,
+        destination_latitude=3.0738,
+        destination_longitude=101.607,
+    )
+
+    response = client.post(
+        f"/api/matches/ride-requests/{ride_request.request_id}/auto-assign",
+        headers=auth_headers_for(rider),
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["status"] == "confirmed"
+    assert payload["trip_id"] == close_trip.trip_id
+
+    db_session.refresh(ride_request)
+    db_session.refresh(close_trip)
+    assert ride_request.status == RideRequestStatus.matched
+    assert close_trip.status == TripStatus.matched
+    assert close_trip.available_seats == 2
+
+
+def test_confirm_match_rechecks_capacity_before_reserving_seat(client, db_session: Session):
+    driver = create_driver(db_session, index=41)
+    rider_one = create_rider(db_session, gender=Gender.female)
+    rider_two = create_user(
+        db_session,
+        name="Second Rider",
+        email="second-capacity-rider@sd.taylors.edu.my",
+        role=UserRole.rider,
+        gender=Gender.female,
+        student_id="SECOND-CAP",
+    )
+    request_one = create_request(db_session, rider_one, passenger_count=1)
+    request_two = create_request(db_session, rider_two, passenger_count=1, preferred_time=request_one.preferred_time)
+    create_trip(db_session, driver, available_seats=1, departure_time=request_one.preferred_time)
+    first_recommendation = client.get(
+        f"/api/matches/ride-requests/{request_one.request_id}/recommendations",
+        headers=auth_headers_for(rider_one),
+    ).json()[0]
+    second_recommendation = client.get(
+        f"/api/matches/ride-requests/{request_two.request_id}/recommendations",
+        headers=auth_headers_for(rider_two),
+    ).json()[0]
+
+    first_response = client.post(
+        f"/api/matches/{first_recommendation['match_id']}/confirm",
+        headers=auth_headers_for(rider_one),
+    )
+    second_response = client.post(
+        f"/api/matches/{second_recommendation['match_id']}/confirm",
+        headers=auth_headers_for(rider_two),
+    )
+
+    assert first_response.status_code == 200
+    assert second_response.status_code == 400
+    assert second_response.json()["detail"] == "Trip is not available"
 
 
 def test_driver_can_reject_recommended_match(client, db_session: Session):
