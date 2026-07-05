@@ -28,6 +28,13 @@ export const CAMPUS_STOPS: Point[] = [
   { label: "One Utama", latitude: 3.1504, longitude: 101.6155 }
 ];
 
+export const ROUTE_PRESETS: Array<{ label: string; origin: Point; destination: Point }> = [
+  { label: "Taylor's -> Sunway Pyramid", origin: TAYLORS_CENTER, destination: CAMPUS_STOPS[1] },
+  { label: "Taylor's -> Subang Jaya LRT", origin: TAYLORS_CENTER, destination: CAMPUS_STOPS[3] },
+  { label: "Taylor's -> Bandar Sunway BRT", origin: TAYLORS_CENTER, destination: CAMPUS_STOPS[5] },
+  { label: "DK Senza -> Taylor's", origin: { label: "DK Senza", latitude: 3.0658, longitude: 101.6123 }, destination: TAYLORS_CENTER }
+];
+
 export function haversineDistanceKm(a: Point, b: Point): number {
   const radiusKm = 6371;
   const lat1 = toRadians(a.latitude);

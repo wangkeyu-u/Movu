@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import type { Point } from "../api/types";
 import {
   CAMPUS_STOPS,
+  ROUTE_PRESETS,
   SERVICE_BOUNDS,
   SERVICE_RADIUS_KM,
   TAYLORS_CENTER,
@@ -99,6 +100,12 @@ export function CampusMapPicker({ origin, destination, onChange }: CampusMapPick
     onChange(target, point);
   }
 
+  function choosePreset(originPoint: Point, destinationPoint: Point) {
+    setMessage(null);
+    onChange("origin", originPoint);
+    onChange("destination", destinationPoint);
+  }
+
   function chooseCurrentLocation() {
     if (!navigator.geolocation) {
       setMessage(t("common.locationUnavailable"));
@@ -174,6 +181,15 @@ export function CampusMapPicker({ origin, destination, onChange }: CampusMapPick
         ))}
       </div>
 
+      <div className="route-presets" aria-label={t("map.routePresets")}>
+        {ROUTE_PRESETS.map((preset) => (
+          <Button key={preset.label} variant="ghost" type="button" onClick={() => choosePreset(preset.origin, preset.destination)}>
+            <span>{preset.label}</span>
+            <small>{haversineDistanceKm(preset.origin, preset.destination)}km</small>
+          </Button>
+        ))}
+      </div>
+
       <div className="map-canvas" ref={mapRef} onPointerUp={handleMapClick}>
         {tiles.map((tile) => (
           <img
@@ -207,9 +223,10 @@ export function CampusMapPicker({ origin, destination, onChange }: CampusMapPick
             D
           </div>
         )}
+        {origin && destination && <div className="route-line-preview" aria-hidden="true" />}
       </div>
 
-      <div className="map-actions">
+      <div className="map-actions grab-route-panel">
         <Button variant="secondary" type="button" onClick={chooseCurrentLocation}>
           <LocateFixed size={17} aria-hidden="true" />
           {t("common.useCurrent")}

@@ -45,6 +45,9 @@
     "ride": "Ride",
     "drive": "Drive",
     "safety": "Safety",
+    "activity": "Activity",
+    "trips": "Trips",
+    "garage": "Garage",
     "account": "Account"
   },
   "status": {
@@ -65,7 +68,8 @@
     "confirmed": "Confirmed",
     "reviewing": "Reviewing",
     "resolved": "Resolved",
-    "false_alarm": "False alarm"
+    "false_alarm": "False alarm",
+    "driver": "Driver only"
   },
   "roles": {
     "admin": "Admin",
@@ -88,10 +92,19 @@
     "banned": {
       "title": "Your account is banned",
       "body": "MovU actions are locked for this account. Contact a MovU administrator for support."
+    },
+    "driver_only": {
+      "title": "Driver tools require a driver account",
+      "body": "Switch to a driver account to register vehicles, post trips, and manage rider recommendations."
     }
   },
   "auth": {
     "hero": "Verified carpooling within 30km of Taylor's University.",
+    "driverHero": "Driver dispatch, rider pickup, chat, and live location for Taylor's carpool trips.",
+    "studentPortal": "Student",
+    "driverPortal": "Driver",
+    "studentLoginNote": "Student accounts request rides, receive system-assigned drivers, chat, and watch live driver location.",
+    "driverLoginNote": "Driver accounts manage vehicles, accept assigned riders, share location, and chat with passengers.",
     "mode": "Authentication mode",
     "signIn": "Sign in",
     "fullName": "Full name",
@@ -115,6 +128,7 @@
     "intro": "Plan verified campus rides inside the Taylor's University 30km service area.",
     "requestRide": "Request a ride",
     "postTrip": "Post a trip",
+    "rideActivity": "Ride activity",
     "safetyTools": "Safety tools",
     "serviceTitle": "30km campus service area",
     "serviceBody": "Origins and destinations are validated against Taylor's Lakeside Campus before a ride or trip is created.",
@@ -129,6 +143,10 @@
   },
   "ride": {
     "title": "Request ride",
+    "heroLabel": "Rider flow",
+    "workflow": "Ride workflow",
+    "bookTab": "Book",
+    "activityTab": "Activity",
     "subtitle": "Pick both points inside Taylor's 30km service area. Route distance is calculated by the API.",
     "preferredTime": "Preferred time",
     "passengers": "Passengers",
@@ -142,12 +160,18 @@
     "createFailed": "Could not create request",
     "loadFailed": "Could not load matches",
     "confirmed": "Match confirmed.",
+    "assigned": "System assigned trip #{{tripId}}.",
     "distancePending": "Distance pending",
     "findMatches": "Find matches",
     "tripNumber": "Trip #{{id}}"
   },
   "drive": {
     "title": "Drive",
+    "heroLabel": "Driver flow",
+    "workflow": "Drive workflow",
+    "tripTab": "Trip",
+    "garageTab": "Garage",
+    "tripsTab": "Trips",
     "subtitle": "Register a vehicle, wait for approval, then post trips inside the Taylor's service area.",
     "vehicles": "Vehicles",
     "plateNumber": "Plate number",
@@ -161,7 +185,40 @@
     "myTrips": "My trips",
     "riderMatches": "Rider matches",
     "requestNumber": "Request #{{id}}",
-    "matchRejected": "Match rejected."
+    "matchRejected": "Match rejected.",
+    "startTrip": "Start pickup",
+    "completeTrip": "Complete trip",
+    "tripStarted": "Trip started. Riders can now see the driver location.",
+    "tripCompleted": "Trip completed.",
+    "tripCancelled": "Trip cancelled."
+  },
+  "match": {
+    "recommended": "Recommended match",
+    "scores": {
+      "route_alignment_score": "route fit",
+      "route_order_score": "pickup order",
+      "passenger_convenience_score": "rider ease",
+      "driver_detour_score": "driver detour"
+    }
+  },
+  "network": {
+    "title": "Trip network",
+    "driverLocation": "Driver live location",
+    "locationPending": "Waiting for driver location",
+    "messages": "Trip messages",
+    "emptyMessages": "No messages yet",
+    "messagePlaceholder": "Message driver or passenger",
+    "sendMessage": "Send message",
+    "noVehicle": "No vehicle info yet",
+    "passengers": "Passengers",
+    "noPassengers": "No passengers yet",
+    "seatsAvailable": "seats available",
+    "shareLocation": "Share once",
+    "startLiveSharing": "Start live sharing",
+    "stopLiveSharing": "Stop sharing",
+    "liveSharingOn": "Live location sharing is on.",
+    "locating": "Locating",
+    "locationShared": "Live location synced."
   },
   "map": {
     "target": "Location target",
@@ -172,14 +229,22 @@
     "currentLocation": "Current location",
     "droppedPin": "Dropped pin",
     "readFailed": "Could not read current location.",
-    "chooseOnMap": "Choose on map"
+    "chooseOnMap": "Choose on map",
+    "routePresets": "Route presets"
   },
   "safety": {
     "label": "Safety",
-    "title": "Share location when the trip is active.",
-    "subtitle": "SOS alerts go to administrators with your trip ID and coordinates.",
+    "title": "SOS should be one tap away.",
+    "subtitle": "MovU finds your current or recent trip, grabs your live location, then asks you to confirm the emergency call.",
     "shareLocation": "Share location",
     "sendSos": "Send SOS",
+    "locating": "Locating now",
+    "currentTrip": "Current safety trip",
+    "findingTrip": "Finding current trip",
+    "noActiveTrip": "No active or recent trip found",
+    "confirmTitle": "Confirm SOS call",
+    "confirmBody": "Admins will receive an emergency alert for trip #{{tripId}} with your live coordinates.",
+    "confirmCall": "Confirm emergency call",
     "locationShared": "Location shared with the trip.",
     "sosSent": "SOS sent to administrators.",
     "activeTrips": "Active trip references",

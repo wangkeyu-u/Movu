@@ -35,6 +35,7 @@ export interface RideRequest {
   destination_latitude?: number | null;
   destination_longitude?: number | null;
   preferred_time: string;
+  preferred_time_timezone: string;
   passenger_count: number;
   gender_preference: string;
   distance_km?: number | null;
@@ -52,6 +53,7 @@ export interface Trip {
   destination_latitude?: number | null;
   destination_longitude?: number | null;
   departure_time: string;
+  departure_time_timezone: string;
   available_seats: number;
   total_seats: number;
   status: TripStatus;
@@ -68,6 +70,36 @@ export interface Vehicle {
   created_at: string;
 }
 
+export interface NetworkUser {
+  user_id: number;
+  name: string;
+  role: Role;
+  rating: number;
+}
+
+export interface NetworkVehicle {
+  vehicle_id: number;
+  plate_number: string;
+  vehicle_model: string;
+  seat_count: number;
+  verification_status: VerificationStatus;
+}
+
+export interface NetworkRider {
+  user_id: number;
+  name: string;
+  rating: number;
+  passenger_count: number;
+  pickup: string;
+  dropoff: string;
+}
+
+export interface TripNetwork extends Trip {
+  driver: NetworkUser;
+  vehicle?: NetworkVehicle | null;
+  riders: NetworkRider[];
+}
+
 export interface Match {
   match_id: number;
   trip_id: number;
@@ -78,6 +110,25 @@ export interface Match {
   reasons: string[];
   status: MatchStatus;
   created_at: string;
+}
+
+export interface TripMessage {
+  message_id: number;
+  trip_id: number;
+  sender_id: number;
+  sender_name: string;
+  sender_role: Role;
+  body: string;
+  created_at: string;
+}
+
+export interface LocationLog {
+  log_id: number;
+  trip_id: number;
+  user_id: number;
+  latitude: number;
+  longitude: number;
+  timestamp: string;
 }
 
 export interface SOSEvent {

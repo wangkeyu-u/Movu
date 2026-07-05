@@ -1,65 +1,93 @@
 import { Button, Card } from "@movu/ui";
-import { LocateFixed, Siren } from "lucide-react";
+import { LocateFixed, PhoneCall, Siren, X } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { api } from "../api/client";
+import type { Trip } from "../api/types";
 import { AccessNotice } from "../components/AccessNotice";
-import { Field } from "../components/Field";
 import { StatusPill } from "../components/StatusPill";
 import { Toast } from "../components/Toast";
 import { useDepthTilt } from "../components/useDepthTilt";
 import { useAuth } from "../routes/AuthProvider";
 import { getAccessIssue } from "../utils/access";
+import { formatDateTime } from "../utils/format";
 import { useResource } from "./useResource";
+
+interface PendingSos {
+  trip: Trip;
+  latitude: number;
+  longitude: number;
+}
 
 export function SafetyPage() {
   const { user } = useAuth();
-  const trips = useResource(() => api.trips().catch(() => api.rideRequests().then(() => [])), []);
-  const { t } = useTranslation();
+  const { i18n, t } = useTranslation();
   const accessIssue = getAccessIssue(user);
-  const [tripId, setTripId] = useState("");
-  const [latitude, setLatitude] = useState("");
-  const [longitude, setLongitude] = useState("");
+  const currentTrip = useResource(() => api.currentSafetyTrip(), []);
+  const [pendingSos, setPendingSos] = useState<PendingSos | null>(null);
+  const [locating, setLocating] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const heroDepth = useDepthTilt(3);
+  const heroDepth = useDepthTilt(2.2);
 
-  function useCurrentLocation() {
+  async function locateNow(): Promise<{ latitude: number; longitude: number }> {
     if (!navigator.geolocation) {
-      setError(t("common.locationUnavailable"));
-      return;
+      throw new Error(t("common.locationUnavailable"));
     }
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setLatitude(String(roundCoordinate(position.coords.latitude)));
-        setLongitude(String(roundCoordinate(position.coords.longitude)));
-      },
-      () => setError(t("map.readFailed")),
-      { enableHighAccuracy: true, timeout: 8000 }
-    );
-  }
-
-  async function sendLocation(event: React.FormEvent) {
-    event.preventDefault();
-    await run(async () => {
-      await api.sendLocation({
-        trip_id: Number(tripId),
-        latitude: Number(latitude),
-        longitude: Number(longitude)
-      });
-      setMessage(t("safety.locationShared"));
+    return new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          resolve({
+            latitude: roundCoordinate(position.coords.latitude),
+            longitude: roundCoordinate(position.coords.longitude)
+          });
+        },
+        () => reject(new Error(t("map.readFailed"))),
+        { enableHighAccuracy: true, timeout: 6000, maximumAge: 0 }
+      );
     });
   }
 
-  async function triggerSos() {
+  async function prepareSos() {
+    setError(null);
+    setMessage(null);
+    setLocating(true);
+    try {
+      const trip = currentTrip.data ?? (await api.currentSafetyTrip());
+      const location = await locateNow();
+      setPendingSos({ trip, ...location });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("safety.noActiveTrip"));
+    } finally {
+      setLocating(false);
+    }
+  }
+
+  async function confirmSos() {
+    if (!pendingSos) return;
     await run(async () => {
       await api.triggerSos({
-        trip_id: Number(tripId),
-        latitude: Number(latitude),
-        longitude: Number(longitude)
+        trip_id: pendingSos.trip.trip_id,
+        latitude: pendingSos.latitude,
+        longitude: pendingSos.longitude
       });
+      setPendingSos(null);
       setMessage(t("safety.sosSent"));
+    });
+  }
+
+  async function shareDriverLocation() {
+    const trip = currentTrip.data;
+    if (!trip) return;
+    await run(async () => {
+      const location = await locateNow();
+      await api.sendLocation({
+        trip_id: trip.trip_id,
+        latitude: location.latitude,
+        longitude: location.longitude
+      });
+      setMessage(t("safety.locationShared"));
     });
   }
 
@@ -88,40 +116,57 @@ export function SafetyPage() {
       {accessIssue ? (
         <AccessNotice issue={accessIssue} />
       ) : (
-        <Card as="form" className="records-panel form-stack" onSubmit={sendLocation}>
-          <Field label={t("common.tripId")} inputMode="numeric" value={tripId} onChange={(event) => setTripId(event.target.value)} required />
-          <div className="split-fields">
-            <Field label={t("common.latitude")} inputMode="decimal" value={latitude} onChange={(event) => setLatitude(event.target.value)} required />
-            <Field label={t("common.longitude")} inputMode="decimal" value={longitude} onChange={(event) => setLongitude(event.target.value)} required />
+        <Card className="sos-console">
+          <div className="sos-trip-card">
+            <span>{t("safety.currentTrip")}</span>
+            {currentTrip.data ? (
+              <>
+                <strong>{currentTrip.data.origin} {t("common.routeJoiner")} {currentTrip.data.destination}</strong>
+                <small>{formatDateTime(currentTrip.data.departure_time, i18n.language === "en" ? "en-MY" : i18n.language)}</small>
+                <StatusPill value={currentTrip.data.status} />
+              </>
+            ) : (
+              <strong>{currentTrip.loading ? t("safety.findingTrip") : t("safety.noActiveTrip")}</strong>
+            )}
           </div>
-          <div className="button-row">
-            <Button variant="secondary" type="button" onClick={useCurrentLocation}>
+
+          <Button className="sos-panic-button" variant="danger" type="button" onClick={prepareSos} disabled={locating || currentTrip.loading}>
+            <Siren size={26} aria-hidden="true" />
+            {locating ? t("safety.locating") : t("safety.sendSos")}
+          </Button>
+
+          {user?.role === "driver" && currentTrip.data?.status === "ongoing" && (
+            <Button variant="secondary" type="button" onClick={shareDriverLocation}>
               <LocateFixed size={17} aria-hidden="true" />
-              {t("common.useCurrent")}
-            </Button>
-            <Button type="submit">
               {t("safety.shareLocation")}
             </Button>
-          </div>
-          <Button variant="danger" type="button" onClick={triggerSos}>
-            {t("safety.sendSos")}
-          </Button>
+          )}
         </Card>
+      )}
+
+      {pendingSos && (
+        <div className="confirm-sheet" role="dialog" aria-modal="true" aria-label={t("safety.confirmTitle")}>
+          <Card className="confirm-panel">
+            <Button className="sheet-close" variant="icon" type="button" onClick={() => setPendingSos(null)} aria-label={t("common.cancel")}>
+              <X size={18} aria-hidden="true" />
+            </Button>
+            <Siren size={32} aria-hidden="true" />
+            <h2>{t("safety.confirmTitle")}</h2>
+            <p>{t("safety.confirmBody", { tripId: pendingSos.trip.trip_id })}</p>
+            <div className="sos-coordinate">
+              <span>{pendingSos.latitude}</span>
+              <span>{pendingSos.longitude}</span>
+            </div>
+            <Button variant="danger" type="button" onClick={confirmSos} wide>
+              <PhoneCall size={18} aria-hidden="true" />
+              {t("safety.confirmCall")}
+            </Button>
+          </Card>
+        </div>
       )}
 
       <Toast message={error} tone="error" />
       <Toast message={message} tone="success" />
-
-      <Card className="records-panel">
-        <h2>{t("safety.activeTrips")}</h2>
-        {trips.data?.map((trip) => (
-          <Button className="trip-select" variant="ghost" type="button" key={trip.trip_id} onClick={() => setTripId(String(trip.trip_id))}>
-            <span>{t("safety.tripNumber", { id: trip.trip_id })}</span>
-            <StatusPill value={trip.status} />
-          </Button>
-        ))}
-        {!trips.loading && !trips.data?.length && <p className="empty-copy">{t("safety.empty")}</p>}
-      </Card>
     </div>
   );
 }

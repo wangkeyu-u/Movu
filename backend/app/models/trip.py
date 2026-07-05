@@ -20,6 +20,7 @@ class Trip(Base):
     destination_latitude: Mapped[float] = mapped_column(Float, nullable=True)
     destination_longitude: Mapped[float] = mapped_column(Float, nullable=True)
     departure_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, index=True)
+    departure_time_timezone: Mapped[str] = mapped_column(String(64), nullable=False, default="Asia/Kuala_Lumpur")
     available_seats: Mapped[int] = mapped_column(Integer, nullable=False)
     total_seats: Mapped[int] = mapped_column(Integer, nullable=False)
     status: Mapped[TripStatus] = mapped_column(
@@ -33,5 +34,6 @@ class Trip(Base):
     driver = relationship("User", back_populates="trips")
     matches = relationship("RideMatch", back_populates="trip", cascade="all, delete-orphan")
     location_logs = relationship("LocationLog", back_populates="trip", cascade="all, delete-orphan")
+    messages = relationship("TripMessage", back_populates="trip", cascade="all, delete-orphan")
     sos_events = relationship("SOSEvent", back_populates="trip")
     rating_reports = relationship("RatingReport", back_populates="trip")

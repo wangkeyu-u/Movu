@@ -1,6 +1,6 @@
 import type { User } from "../api/types";
 
-export type AccessIssue = "email_unverified" | "pending" | "rejected" | "banned";
+export type AccessIssue = "email_unverified" | "pending" | "rejected" | "banned" | "driver_only";
 
 export function getAccessIssue(user: User | null): AccessIssue | null {
   if (!user) return null;

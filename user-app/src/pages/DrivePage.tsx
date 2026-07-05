@@ -1,5 +1,5 @@
 import { Button, Card } from "@movu/ui";
-import { RefreshCw } from "lucide-react";
+import { CarFront, Clock3, ParkingCircle, RefreshCw, Route } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -7,20 +7,29 @@ import { api } from "../api/client";
 import type { Match, Point } from "../api/types";
 import { AccessNotice } from "../components/AccessNotice";
 import { CampusMapPicker } from "../components/CampusMapPicker";
+import { ExperienceHero } from "../components/ExperienceHero";
 import { Field } from "../components/Field";
+import { MatchInsightCard } from "../components/MatchInsightCard";
 import { StatusPill } from "../components/StatusPill";
 import { Toast } from "../components/Toast";
-import { useDepthTilt } from "../components/useDepthTilt";
+import { TripNetworkPanel } from "../components/TripNetworkPanel";
+import { WorkflowNav } from "../components/WorkflowNav";
 import { useAuth } from "../routes/AuthProvider";
 import { getAccessIssue } from "../utils/access";
-import { fromLocalInputValue, formatDateTime, toLocalInputValue } from "../utils/format";
+import { CAMPUS_TIME_ZONE, fromLocalInputValue, formatDateTime, toLocalInputValue } from "../utils/format";
 import { formatPoint } from "../utils/geo";
 import { useResource } from "./useResource";
 
-export function DrivePage() {
+interface DrivePageProps {
+  mode?: "trip" | "garage" | "trips";
+}
+
+export function DrivePage({ mode = "trip" }: DrivePageProps) {
   const { user } = useAuth();
-  const vehicles = useResource(() => api.vehicles(), []);
-  const trips = useResource(() => api.trips(), []);
+  const isDriver = user?.role === "driver";
+  const vehicles = useResource(() => api.vehicles(), [], { enabled: isDriver, disabledValue: [] });
+  const trips = useResource(() => api.trips(), [], { enabled: isDriver, disabledValue: [] });
+  const networkTrips = useResource(() => api.networkTrips(), [], { enabled: isDriver, disabledValue: [] });
   const { i18n, t } = useTranslation();
   const accessIssue = getAccessIssue(user);
   const approvedSeats = useMemo(
@@ -37,7 +46,6 @@ export function DrivePage() {
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [matches, setMatches] = useState<Record<number, Match[]>>({});
-  const headingDepth = useDepthTilt(3);
 
   async function registerVehicle(event: React.FormEvent) {
     event.preventDefault();
@@ -63,6 +71,7 @@ export function DrivePage() {
         destination_latitude: destination.latitude,
         destination_longitude: destination.longitude,
         departure_time: fromLocalInputValue(departureTime),
+        departure_time_timezone: CAMPUS_TIME_ZONE,
         available_seats: availableSeats
       });
       setMessage(t("drive.posted"));
@@ -84,6 +93,15 @@ export function DrivePage() {
     });
   }
 
+  async function updateTripStatus(tripId: number, status: "ongoing" | "completed" | "cancelled", successMessage: string) {
+    await run(async () => {
+      await api.updateTripStatus(tripId, status);
+      setMessage(successMessage);
+      trips.reload();
+      networkTrips.reload();
+    });
+  }
+
   async function run(action: () => Promise<void>) {
     setError(null);
     setMessage(null);
@@ -101,15 +119,27 @@ export function DrivePage() {
 
   return (
     <div className="page-stack">
-      <section className="section-heading visual-heading drive-heading depth-surface" {...headingDepth}>
-        <div>
-          <h1>{t("drive.title")}</h1>
-          <p>{t("drive.subtitle")}</p>
-        </div>
-        <img src="/assets/images/ill-carpooling-public-domain.png" alt="" aria-hidden="true" />
-      </section>
+      <ExperienceHero
+        title={t("drive.title")}
+        subtitle={t("drive.subtitle")}
+        label={t("drive.heroLabel")}
+        image="/assets/images/bg-campus-path-students.jpg"
+        icon={<CarFront size={28} />}
+        variant="drive"
+      />
 
-      <Card className="records-panel">
+      <WorkflowNav
+        label={t("drive.workflow")}
+        items={[
+          { to: "/", label: t("drive.tripTab"), icon: <Route size={17} aria-hidden="true" />, end: true },
+          { to: "/driver/garage", label: t("drive.garageTab"), icon: <ParkingCircle size={17} aria-hidden="true" /> },
+          { to: "/driver/trips", label: t("drive.tripsTab"), icon: <Clock3 size={17} aria-hidden="true" /> }
+        ]}
+      />
+
+      {!isDriver && <AccessNotice issue="driver_only" />}
+
+      {mode === "garage" && isDriver && <Card className="records-panel">
         <div className="panel-title">
           <h2>{t("drive.vehicles")}</h2>
           <Button variant="icon" type="button" onClick={vehicles.reload} aria-label={t("common.refreshVehicles")}>
@@ -135,9 +165,9 @@ export function DrivePage() {
             </Button>
           </form>
         )}
-      </Card>
+      </Card>}
 
-      {!accessIssue && (
+      {mode === "trip" && isDriver && !accessIssue && (
         <Card as="form" className="ride-form" onSubmit={createTrip}>
           <div className="panel-title">
             <h2>{t("drive.postTrip")}</h2>
@@ -154,7 +184,7 @@ export function DrivePage() {
               <strong>{formatPoint(destination, t("map.chooseOnMap"))}</strong>
             </div>
           </div>
-          <Field label={t("drive.departureTime")} type="datetime-local" value={departureTime} onChange={(event) => setDepartureTime(event.target.value)} required />
+          <Field label={`${t("drive.departureTime")} (${CAMPUS_TIME_ZONE})`} type="datetime-local" value={departureTime} onChange={(event) => setDepartureTime(event.target.value)} required />
           <Field
             label={t("common.availableSeats")}
             type="number"
@@ -170,10 +200,12 @@ export function DrivePage() {
         </Card>
       )}
 
+      {mode === "trip" && isDriver && accessIssue && <AccessNotice issue={accessIssue} />}
+
       <Toast message={error} tone="error" />
       <Toast message={message} tone="success" />
 
-      <Card className="records-panel">
+      {mode === "trips" && isDriver && <Card className="records-panel">
         <div className="panel-title">
           <h2>{t("drive.myTrips")}</h2>
           <Button variant="icon" type="button" onClick={trips.reload} aria-label={t("common.refreshTrips")}>
@@ -196,24 +228,38 @@ export function DrivePage() {
                   {t("drive.riderMatches")}
                 </Button>
                 {trip.status === "posted" && (
-                  <Button variant="ghost" type="button" onClick={() => api.updateTripStatus(trip.trip_id, "cancelled").then(trips.reload)}>
+                  <Button variant="ghost" type="button" onClick={() => updateTripStatus(trip.trip_id, "cancelled", t("drive.tripCancelled"))}>
                     {t("common.cancel")}
+                  </Button>
+                )}
+                {trip.status === "matched" && (
+                  <Button variant="primary" type="button" onClick={() => updateTripStatus(trip.trip_id, "ongoing", t("drive.tripStarted"))}>
+                    {t("drive.startTrip")}
+                  </Button>
+                )}
+                {trip.status === "ongoing" && (
+                  <Button variant="secondary" type="button" onClick={() => updateTripStatus(trip.trip_id, "completed", t("drive.tripCompleted"))}>
+                    {t("drive.completeTrip")}
                   </Button>
                 )}
               </div>
             )}
             {!accessIssue && matches[trip.trip_id]?.map((match) => (
-              <div className="match-row" key={match.match_id}>
-                <span>{t("drive.requestNumber", { id: match.request_id })}</span>
-                <strong>{Math.round(match.match_score)}%</strong>
-                <Button variant="secondary" type="button" onClick={() => reject(match.match_id)}>
-                  {t("common.reject")}
-                </Button>
-              </div>
+              <MatchInsightCard
+                key={match.match_id}
+                match={match}
+                label={t("drive.requestNumber", { id: match.request_id })}
+                actionLabel={t("common.reject")}
+                onAction={() => reject(match.match_id)}
+              />
             ))}
           </Card>
         ))}
-      </Card>
+      </Card>}
+
+      {mode === "trips" && isDriver && networkTrips.data
+        ?.filter((trip) => ["matched", "ongoing", "completed"].includes(trip.status))
+        .map((trip) => <TripNetworkPanel key={trip.trip_id} trip={trip} />)}
     </div>
   );
 }

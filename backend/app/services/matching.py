@@ -50,6 +50,9 @@ class RouteInsertionEstimate:
     shared_passenger_duration_min: float
     pickup_walk_distance_km: float
     dropoff_walk_distance_km: float
+    pickup_route_progress: float = 0.0
+    dropoff_route_progress: float = 0.0
+    route_order_score: float = 1.0
 
 
 @dataclass(frozen=True)
@@ -146,7 +149,11 @@ def angle_between_routes(
     return _angle_delta(driver_bearing, passenger_bearing)
 
 
-def point_to_segment_distance_km(point: Coordinate, segment_start: Coordinate, segment_end: Coordinate) -> float:
+def _point_to_segment_projection_km(
+    point: Coordinate,
+    segment_start: Coordinate,
+    segment_end: Coordinate,
+) -> tuple[float, float]:
     lat0 = radians((segment_start[0] + segment_end[0] + point[0]) / 3.0)
 
     def to_xy(coordinate: Coordinate) -> tuple[float, float]:
@@ -161,11 +168,16 @@ def point_to_segment_distance_km(point: Coordinate, segment_start: Coordinate, s
     dy = ey - sy
     length_squared = dx * dx + dy * dy
     if length_squared == 0:
-        return _coordinate_distance_km(point, segment_start)
+        return _coordinate_distance_km(point, segment_start), 0.0
     t = max(0.0, min(1.0, ((px - sx) * dx + (py - sy) * dy) / length_squared))
     nearest_x = sx + t * dx
     nearest_y = sy + t * dy
-    return sqrt((px - nearest_x) ** 2 + (py - nearest_y) ** 2)
+    return sqrt((px - nearest_x) ** 2 + (py - nearest_y) ** 2), t
+
+
+def point_to_segment_distance_km(point: Coordinate, segment_start: Coordinate, segment_end: Coordinate) -> float:
+    distance_km, _ = _point_to_segment_projection_km(point, segment_start, segment_end)
+    return distance_km
 
 
 def _has_route_coordinates(ride_request: RideRequest, trip: Trip) -> bool:
@@ -232,16 +244,17 @@ def estimate_route_insertion(coordinates: RouteCoordinates) -> RouteInsertionEst
     )
     detour_distance_km = max(0.0, shared_route_distance_km - original_driver_distance_km)
     passenger_direct_distance_km = _coordinate_distance_km(coordinates.passenger_pickup, coordinates.passenger_dropoff)
-    pickup_walk_distance_km = point_to_segment_distance_km(
+    pickup_walk_distance_km, pickup_route_progress = _point_to_segment_projection_km(
         coordinates.passenger_pickup,
         coordinates.driver_origin,
         coordinates.driver_destination,
     )
-    dropoff_walk_distance_km = point_to_segment_distance_km(
+    dropoff_walk_distance_km, dropoff_route_progress = _point_to_segment_projection_km(
         coordinates.passenger_dropoff,
         coordinates.driver_origin,
         coordinates.driver_destination,
     )
+    route_order_score = calculate_route_order_score(pickup_route_progress, dropoff_route_progress)
     walking_duration_min = _duration_minutes(
         pickup_walk_distance_km + dropoff_walk_distance_km,
         AVERAGE_WALK_SPEED_KMH,
@@ -269,6 +282,9 @@ def estimate_route_insertion(coordinates: RouteCoordinates) -> RouteInsertionEst
         shared_passenger_duration_min=shared_passenger_duration_min,
         pickup_walk_distance_km=pickup_walk_distance_km,
         dropoff_walk_distance_km=dropoff_walk_distance_km,
+        pickup_route_progress=pickup_route_progress,
+        dropoff_route_progress=dropoff_route_progress,
+        route_order_score=route_order_score,
     )
 
 
@@ -280,6 +296,13 @@ def proximity_score(distance_km: float, max_distance_km: float) -> float:
 
 def calculate_route_alignment_score(angle_degrees: float) -> float:
     return _clamp01(1.0 - angle_degrees / 75.0)
+
+
+def calculate_route_order_score(pickup_progress: float, dropoff_progress: float) -> float:
+    progress_delta = dropoff_progress - pickup_progress
+    if progress_delta < 0:
+        return 0.0
+    return _clamp01(0.55 + progress_delta / 0.45)
 
 
 def route_alignment_score(ride_request: RideRequest, trip: Trip) -> float:
@@ -351,7 +374,8 @@ def calculate_passenger_convenience_score(
         pickup_score * 0.30
         + dropoff_score * 0.20
         + waiting_score * 0.25
-        + ride_time_score * 0.25
+        + ride_time_score * 0.20
+        + route_insertion.route_order_score * 0.05
     )
 
 
@@ -366,10 +390,11 @@ def calculate_driver_acceptance_score(
     route_proximity_score = (pickup_route_score + dropoff_route_score) / 2
     return (
         detour_score * 0.35
-        + route_proximity_score * 0.25
+        + route_proximity_score * 0.20
         + capacity_score(ride_request, trip) * 0.15
         + _passenger_rating_score(ride_request) * 0.15
         + _passenger_reliability_score(ride_request) * 0.10
+        + route_insertion.route_order_score * 0.05
     )
 
 
@@ -427,6 +452,8 @@ def build_match_explanation(
 
     if route_insertion is not None:
         reasons.append(f"Estimated driver detour is {round(route_insertion.detour_duration_min)} minutes")
+        if route_insertion.route_order_score >= 0.9:
+            reasons.append("Pickup appears before dropoff along the driver's route")
         if route_insertion.pickup_walk_distance_km <= 0.5:
             reasons.append("Pickup is near the driver's route")
         if route_insertion.dropoff_walk_distance_km <= 0.5:
@@ -506,6 +533,8 @@ def evaluate_match_candidate(ride_request: RideRequest, trip: Trip) -> MatchEval
         return MatchEvaluation(0.0, {}, [], "opposite_direction")
 
     route_insertion = estimate_route_insertion(coordinates)
+    if route_insertion.route_order_score <= 0:
+        return MatchEvaluation(0.0, {}, [], "route_sequence_reversed", route_insertion)
     if route_insertion.detour_distance_km > MAX_DRIVER_DETOUR_KM:
         return MatchEvaluation(0.0, {}, [], "too_much_driver_detour")
     if route_insertion.detour_duration_min > MAX_DRIVER_DETOUR_MINUTES:
@@ -517,7 +546,7 @@ def evaluate_match_candidate(ride_request: RideRequest, trip: Trip) -> MatchEval
         return MatchEvaluation(0.0, {}, [], "passenger_walk_too_far")
 
     waiting_time_minutes = abs((trip.departure_time - ride_request.preferred_time).total_seconds()) / 60
-    route_alignment = calculate_route_alignment_score(angle_degrees)
+    route_alignment = calculate_route_alignment_score(angle_degrees) * (0.75 + route_insertion.route_order_score * 0.25)
     driver_detour = calculate_driver_detour_score(route_insertion)
     passenger_convenience = calculate_passenger_convenience_score(route_insertion, waiting_time_minutes)
     driver_acceptance = calculate_driver_acceptance_score(ride_request, trip, route_insertion)
@@ -531,6 +560,7 @@ def evaluate_match_candidate(ride_request: RideRequest, trip: Trip) -> MatchEval
     trust_safety = _trust_safety_score(ride_request, trip)
     score_breakdown = {
         "route_alignment_score": route_alignment,
+        "route_order_score": route_insertion.route_order_score,
         "driver_detour_score": driver_detour,
         "passenger_convenience_score": passenger_convenience,
         "time_fit_score": time_score(ride_request.preferred_time, trip.departure_time),
