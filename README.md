@@ -1,6 +1,6 @@
 # MovU Carpooling
 
-MovU is a production-ready campus carpooling platform for Taylor's University students and staff. It supports email-verified campus users, rider-driver matching, vehicle verification, route-distance calculation, live location tracking, SOS safety alerts, ratings, reports, audit logs, and an admin dashboard.
+MovU is a campus carpooling platform for Taylor's University students and staff. It supports email-verified campus users, rider-driver matching, automatic assignment, verified vehicle display, multi-passenger trip networks, route-distance calculation, WebSocket live location tracking, SOS safety alerts, ratings, reports, audit logs, and an admin dashboard.
 
 ## Tech Stack
 
@@ -142,6 +142,9 @@ Production mode is stricter than local development:
 - Local seed/reset is blocked in production.
 - Simulated payments are blocked in production. Payment collection remains disabled until an approved provider is configured.
 - Backend containers run `alembic upgrade head` before serving traffic.
+- Match confirmation uses database row-level locking so concurrent riders cannot reserve the same seat twice on databases that support `SELECT ... FOR UPDATE`.
+- Trip network responses include the driver, approved vehicle, confirmed riders, seats, chat, and live location hooks.
+- Ride and trip schedule inputs are interpreted as Taylor's campus time (`Asia/Kuala_Lumpur`) and stored with timezone metadata plus UTC timestamps.
 - Security-sensitive admin actions are written to audit logs.
 - Basic API rate limiting is enabled; use Redis-backed rate limiting before running multiple backend replicas.
 
@@ -163,7 +166,11 @@ See `DEPLOYMENT.md` for the production Docker Compose checklist, required enviro
 - `POST /api/ride-requests`
 - `POST /api/trips`
 - `GET /api/matches/ride-requests/{request_id}/recommendations`
+- `POST /api/matches/ride-requests/{request_id}/auto-assign`
 - `POST /api/matches/{match_id}/confirm`
+- `GET /api/network/me/trips`
+- `GET /api/network/trips/{trip_id}/messages`
+- `POST /api/network/trips/{trip_id}/messages`
 - `POST /api/locations`
 - `WS /ws/locations/{trip_id}`
 - `POST /api/sos`
@@ -206,3 +213,10 @@ The API returns the top five recommendations ordered by `match_score`. Each reco
 6. Driver sends live location during an ongoing trip.
 7. Rider triggers SOS and admin receives an alert.
 8. Completed trip participants submit ratings or reports.
+
+## Chinese Design Docs
+
+Chinese architecture, runtime, algorithm, database relationship, high-concurrency, use case, and sequence guidance lives in:
+
+- `docs/zh_design_and_release.md`
+- `docs/DIAGRAM_GUIDE.md`

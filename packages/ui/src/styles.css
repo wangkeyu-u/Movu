@@ -9,7 +9,7 @@
   border-radius: 12px;
   padding: 0 14px;
   font: inherit;
-  font-weight: 850;
+  font-weight: 620;
   border: 0;
   cursor: pointer;
   box-shadow:
@@ -138,7 +138,7 @@
   margin: 0;
   border-radius: 12px;
   padding: 11px 12px;
-  font-weight: 760;
+  font-weight: 620;
 }
 
 .ui-alert-error {
@@ -169,7 +169,7 @@
   border-radius: 999px;
   padding: 0 9px;
   font-size: 0.75rem;
-  font-weight: 860;
+  font-weight: 640;
   background: var(--surface-strong);
   color: var(--ink);
 }
@@ -213,7 +213,7 @@
   background: transparent;
   color: var(--muted);
   font: inherit;
-  font-weight: 800;
+  font-weight: 650;
   cursor: pointer;
   transition:
     transform 220ms var(--ease-apple, ease),

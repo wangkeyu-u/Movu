@@ -1,10 +1,9 @@
 import { Card } from "@movu/ui";
-import { ArrowRight, CarFront, MapPinned, ShieldCheck } from "lucide-react";
+import { ArrowRight, Clock3, MapPinned, ShieldCheck } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 import { AccessNotice } from "../components/AccessNotice";
-import { StatusPill } from "../components/StatusPill";
 import { useDepthTilt } from "../components/useDepthTilt";
 import { useAuth } from "../routes/AuthProvider";
 import { getAccessIssue } from "../utils/access";
@@ -28,16 +27,6 @@ export function HomePage() {
         <div className="home-scene" aria-hidden="true">
           <img src="/assets/images/bg-campus-path-students.jpg" alt="" />
         </div>
-        <div className="trust-grid">
-          <div>
-            <span>{t("common.email")}</span>
-            <StatusPill value={Boolean(user?.email_verified)} />
-          </div>
-          <div>
-            <span>{t("common.account")}</span>
-            <StatusPill value={user?.verification_status ?? "pending"} />
-          </div>
-        </div>
       </Card>
 
       {accessIssue ? (
@@ -49,9 +38,9 @@ export function HomePage() {
             <span>{t("home.requestRide")}</span>
             <ArrowRight size={18} aria-hidden="true" />
           </Link>
-          <Link className="quick-action" to="/drive">
-            <CarFront size={22} aria-hidden="true" />
-            <span>{t("home.postTrip")}</span>
+          <Link className="quick-action" to="/ride/activity">
+            <Clock3 size={22} aria-hidden="true" />
+            <span>{t("home.rideActivity")}</span>
             <ArrowRight size={18} aria-hidden="true" />
           </Link>
           <Link className="quick-action" to="/safety">

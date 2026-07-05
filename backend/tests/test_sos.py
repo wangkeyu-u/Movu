@@ -89,6 +89,18 @@ def test_trip_driver_can_create_sos_event(client, db_session: Session):
     assert response.json()["user_id"] == driver.user_id
 
 
+def test_current_safety_trip_is_inferred_for_rider_and_driver(client, db_session: Session):
+    driver, rider, trip = create_trip_with_confirmed_rider(db_session)
+
+    rider_response = client.get("/api/sos/current-trip", headers=auth_headers_for(rider))
+    driver_response = client.get("/api/sos/current-trip", headers=auth_headers_for(driver))
+
+    assert rider_response.status_code == 200
+    assert driver_response.status_code == 200
+    assert rider_response.json()["trip_id"] == trip.trip_id
+    assert driver_response.json()["trip_id"] == trip.trip_id
+
+
 def test_unrelated_user_cannot_create_sos_event(client, db_session: Session):
     _, _, trip = create_trip_with_confirmed_rider(db_session)
     unrelated = create_user(

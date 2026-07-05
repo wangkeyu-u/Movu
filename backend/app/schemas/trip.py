@@ -13,6 +13,7 @@ class TripCreate(BaseModel):
     destination_latitude: float | None = Field(default=None, ge=-90, le=90)
     destination_longitude: float | None = Field(default=None, ge=-180, le=180)
     departure_time: datetime
+    departure_time_timezone: str = Field(default="Asia/Kuala_Lumpur", min_length=1, max_length=64)
     available_seats: int = Field(ge=1, le=8)
 
 
@@ -37,6 +38,7 @@ class TripRead(BaseModel):
     destination_latitude: float | None
     destination_longitude: float | None
     departure_time: datetime
+    departure_time_timezone: str
     available_seats: int
     total_seats: int
     status: TripStatus

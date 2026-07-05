@@ -48,6 +48,27 @@ def get_trip_recommendations(
     return recommend_trips_for_request(db, ride_request)
 
 
+@router.post("/ride-requests/{request_id}/auto-assign", response_model=MatchRead)
+def auto_assign_trip_for_request(
+    request_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_approved_roles(UserRole.rider, UserRole.admin)),
+) -> RideMatch:
+    ride_request = db.get(RideRequest, request_id)
+    if ride_request is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Ride request not found")
+    if current_user.role != UserRole.admin and ride_request.rider_id != current_user.user_id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Insufficient role")
+    if ride_request.status != RideRequestStatus.pending:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Ride request is not pending")
+
+    recommendations = recommend_trips_for_request(db, ride_request)
+    if not recommendations:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No suitable driver found")
+    best_match = recommendations[0]
+    return confirm_match(best_match.match_id, db, current_user)
+
+
 @router.get("/trips/{trip_id}/recommendations", response_model=list[MatchRead])
 def get_request_recommendations(
     trip_id: int,
@@ -73,12 +94,17 @@ def confirm_match(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_approved_user),
 ) -> RideMatch:
-    match = db.get(RideMatch, match_id)
+    match = db.query(RideMatch).filter(RideMatch.match_id == match_id).with_for_update().one_or_none()
     if match is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Match not found")
 
-    trip = match.trip
-    ride_request = match.ride_request
+    trip = db.query(Trip).filter(Trip.trip_id == match.trip_id).with_for_update().one()
+    ride_request = (
+        db.query(RideRequest)
+        .filter(RideRequest.request_id == match.request_id)
+        .with_for_update()
+        .one()
+    )
     is_rider = current_user.user_id == ride_request.rider_id
     is_driver = current_user.user_id == trip.driver_id
     if current_user.role != UserRole.admin and not (is_rider or is_driver):

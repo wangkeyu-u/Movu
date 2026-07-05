@@ -1,7 +1,8 @@
 import { Button, Card, TabButton, Tabs } from "@movu/ui";
-import { MailCheck } from "lucide-react";
+import { CarFront, GraduationCap, MailCheck } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 import { api } from "../api/client";
 import { Field } from "../components/Field";
@@ -15,12 +16,14 @@ type AuthMode = "login" | "register" | "verify";
 export function AuthPage() {
   const { login } = useAuth();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [mode, setMode] = useState<AuthMode>("login");
   const [email, setEmail] = useState("admin@taylors.edu.my");
   const [password, setPassword] = useState("Password123");
   const [name, setName] = useState("");
   const [studentId, setStudentId] = useState("");
   const [role, setRole] = useState("rider");
+  const [portal, setPortal] = useState<"rider" | "driver">("rider");
   const [gender, setGender] = useState("prefer_not_to_say");
   const [token, setToken] = useState("");
   const [message, setMessage] = useState<string | null>(null);
@@ -28,10 +31,17 @@ export function AuthPage() {
   const [submitting, setSubmitting] = useState(false);
   const authDepth = useDepthTilt(3.2);
 
+  function choosePortal(nextPortal: "rider" | "driver") {
+    setPortal(nextPortal);
+    setRole(nextPortal);
+    setEmail(nextPortal === "driver" ? "mei@sd.taylors.edu.my" : "aina@sd.taylors.edu.my");
+  }
+
   async function handleLogin(event: React.FormEvent) {
     event.preventDefault();
     await run(async () => {
       await login(email, password);
+      navigate("/", { replace: true });
     });
   }
 
@@ -87,11 +97,22 @@ export function AuthPage() {
           <div className="brand-mark large">M</div>
           <div>
             <h1>MovU</h1>
-            <p>{t("auth.hero")}</p>
+            <p>{portal === "driver" ? t("auth.driverHero") : t("auth.hero")}</p>
           </div>
         </section>
 
         <Card className="auth-panel depth-surface" {...authDepth}>
+          <div className="portal-switcher">
+            <Button className={portal === "rider" ? "active" : ""} variant="ghost" type="button" onClick={() => choosePortal("rider")}>
+              <GraduationCap size={18} aria-hidden="true" />
+              <span>{t("auth.studentPortal")}</span>
+            </Button>
+            <Button className={portal === "driver" ? "active" : ""} variant="ghost" type="button" onClick={() => choosePortal("driver")}>
+              <CarFront size={18} aria-hidden="true" />
+              <span>{t("auth.driverPortal")}</span>
+            </Button>
+          </div>
+
           <Tabs label={t("auth.mode")}>
             <TabButton active={mode === "login"} onClick={() => setMode("login")} type="button">
               {t("common.login")}
@@ -106,6 +127,7 @@ export function AuthPage() {
 
           {mode === "login" && (
             <form className="form-stack" onSubmit={handleLogin}>
+              <div className="portal-note">{portal === "driver" ? t("auth.driverLoginNote") : t("auth.studentLoginNote")}</div>
               <Field label={t("common.campusEmail")} type="email" value={email} onChange={(event) => setEmail(event.target.value)} required />
               <Field label={t("common.password")} type="password" value={password} onChange={(event) => setPassword(event.target.value)} required />
               <Button disabled={submitting} type="submit">

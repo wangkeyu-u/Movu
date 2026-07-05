@@ -45,6 +45,9 @@
     "ride": "乘车",
     "drive": "开车",
     "safety": "安全",
+    "activity": "记录",
+    "trips": "行程",
+    "garage": "车辆",
     "account": "账户"
   },
   "status": {
@@ -65,7 +68,8 @@
     "confirmed": "已确认",
     "reviewing": "审核中",
     "resolved": "已解决",
-    "false_alarm": "误报"
+    "false_alarm": "误报",
+    "driver": "仅司机"
   },
   "roles": {
     "admin": "管理员",
@@ -88,10 +92,19 @@
     "banned": {
       "title": "你的账户已被封禁",
       "body": "此账户无法继续使用 MovU 操作。如需帮助，请联系 MovU 管理员。"
+    },
+    "driver_only": {
+      "title": "司机工具需要司机账户",
+      "body": "请切换到司机账户来注册车辆、发布行程并管理乘客推荐。"
     }
   },
   "auth": {
     "hero": "Taylor's University 周边 30 公里内的认证校园拼车。",
+    "driverHero": "Taylor's 拼车司机调度、接单、聊天和实时位置。",
+    "studentPortal": "学生端",
+    "driverPortal": "司机端",
+    "studentLoginNote": "学生账号用于发起乘车、接收系统分配司机、聊天，并查看司机实时位置。",
+    "driverLoginNote": "司机账号用于管理车辆、接收分配乘客、共享位置，并和乘客沟通。",
     "mode": "认证模式",
     "signIn": "登录",
     "fullName": "姓名",
@@ -115,6 +128,7 @@
     "intro": "在 Taylor's University 周边 30 公里服务区内安排已认证校园拼车。",
     "requestRide": "发起乘车",
     "postTrip": "发布行程",
+    "rideActivity": "乘车记录",
     "safetyTools": "安全工具",
     "serviceTitle": "30 公里校园服务区",
     "serviceBody": "创建乘车请求或司机行程前，出发地和目的地都会按 Taylor's Lakeside Campus 位置验证。",
@@ -129,6 +143,10 @@
   },
   "ride": {
     "title": "发起乘车",
+    "heroLabel": "乘客流程",
+    "workflow": "乘车流程",
+    "bookTab": "叫车",
+    "activityTab": "记录",
     "subtitle": "在 Taylor's 30 公里服务区内选择两个地点。路线距离由 API 计算。",
     "preferredTime": "期望时间",
     "passengers": "乘客人数",
@@ -142,12 +160,18 @@
     "createFailed": "无法创建请求",
     "loadFailed": "无法加载匹配",
     "confirmed": "匹配已确认。",
+    "assigned": "系统已分配行程 #{{tripId}}。",
     "distancePending": "距离待计算",
     "findMatches": "查找匹配",
     "tripNumber": "行程 #{{id}}"
   },
   "drive": {
     "title": "开车",
+    "heroLabel": "司机流程",
+    "workflow": "司机流程",
+    "tripTab": "行程",
+    "garageTab": "车辆",
+    "tripsTab": "记录",
     "subtitle": "先注册车辆并等待审批，然后在 Taylor's 服务区内发布行程。",
     "vehicles": "车辆",
     "plateNumber": "车牌号",
@@ -161,7 +185,40 @@
     "myTrips": "我的行程",
     "riderMatches": "乘客匹配",
     "requestNumber": "请求 #{{id}}",
-    "matchRejected": "匹配已拒绝。"
+    "matchRejected": "匹配已拒绝。",
+    "startTrip": "开始接送",
+    "completeTrip": "完成行程",
+    "tripStarted": "行程已开始，学生端现在可以看到司机位置。",
+    "tripCompleted": "行程已完成。",
+    "tripCancelled": "行程已取消。"
+  },
+  "match": {
+    "recommended": "推荐匹配",
+    "scores": {
+      "route_alignment_score": "路线贴合",
+      "route_order_score": "上下车顺序",
+      "passenger_convenience_score": "乘客便利",
+      "driver_detour_score": "司机绕行"
+    }
+  },
+  "network": {
+    "title": "拼车网络",
+    "driverLocation": "司机实时位置",
+    "locationPending": "等待司机位置",
+    "messages": "行程聊天",
+    "emptyMessages": "暂无消息",
+    "messagePlaceholder": "给司机或乘客发消息",
+    "sendMessage": "发送消息",
+    "noVehicle": "暂无车辆信息",
+    "passengers": "同车乘客",
+    "noPassengers": "暂无乘客",
+    "seatsAvailable": "剩余座位",
+    "shareLocation": "共享一次",
+    "startLiveSharing": "开始持续共享",
+    "stopLiveSharing": "停止共享",
+    "liveSharingOn": "正在持续共享实时位置。",
+    "locating": "正在定位",
+    "locationShared": "实时位置已同步。"
   },
   "map": {
     "target": "地点类型",
@@ -172,14 +229,22 @@
     "currentLocation": "当前位置",
     "droppedPin": "地图选点",
     "readFailed": "无法读取当前位置。",
-    "chooseOnMap": "在地图选择"
+    "chooseOnMap": "在地图选择",
+    "routePresets": "常用路线"
   },
   "safety": {
     "label": "安全",
-    "title": "行程进行中可共享位置。",
-    "subtitle": "SOS 会把你的行程 ID 和坐标发送给管理员。",
+    "title": "SOS 必须一键触达。",
+    "subtitle": "MovU 会自动找到当前或最近行程，获取实时位置，然后只让你确认是否呼叫。",
     "shareLocation": "共享位置",
     "sendSos": "发送 SOS",
+    "locating": "正在定位",
+    "currentTrip": "当前安全行程",
+    "findingTrip": "正在查找当前行程",
+    "noActiveTrip": "没有当前或最近行程",
+    "confirmTitle": "确认 SOS 呼叫",
+    "confirmBody": "管理员将收到行程 #{{tripId}} 的紧急提醒和你的实时坐标。",
+    "confirmCall": "确认紧急呼叫",
     "locationShared": "位置已共享到行程。",
     "sosSent": "SOS 已发送给管理员。",
     "activeTrips": "可用行程参考",

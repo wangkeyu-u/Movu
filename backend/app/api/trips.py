@@ -49,6 +49,7 @@ def create_trip(
         destination_latitude=payload.destination_latitude,
         destination_longitude=payload.destination_longitude,
         departure_time=payload.departure_time,
+        departure_time_timezone=payload.departure_time_timezone,
         available_seats=payload.available_seats,
         total_seats=payload.available_seats,
         status=TripStatus.posted,

@@ -45,6 +45,7 @@ def create_ride_request(
         destination_latitude=payload.destination_latitude,
         destination_longitude=payload.destination_longitude,
         preferred_time=payload.preferred_time,
+        preferred_time_timezone=payload.preferred_time_timezone,
         passenger_count=payload.passenger_count,
         gender_preference=payload.gender_preference,
         distance_km=distance_km,

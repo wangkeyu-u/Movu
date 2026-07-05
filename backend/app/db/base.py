@@ -7,6 +7,7 @@ from app.models.rating_report import RatingReport
 from app.models.ride_request import RideRequest
 from app.models.sos_event import SOSEvent
 from app.models.trip import Trip
+from app.models.trip_message import TripMessage
 from app.models.user import User
 from app.models.vehicle import Vehicle
 
@@ -20,6 +21,7 @@ __all__ = [
     "RideRequest",
     "SOSEvent",
     "Trip",
+    "TripMessage",
     "User",
     "Vehicle",
 ]

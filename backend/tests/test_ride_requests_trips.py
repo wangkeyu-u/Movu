@@ -112,8 +112,35 @@ def test_rider_can_create_and_cancel_ride_request(client, db_session: Session):
 
     assert create_response.status_code == 201
     assert create_response.json()["status"] == "pending"
+    assert create_response.json()["preferred_time_timezone"] == "Asia/Kuala_Lumpur"
     assert cancel_response.status_code == 200
     assert cancel_response.json()["status"] == "cancelled"
+
+
+def test_trip_and_request_preserve_client_time_zone(client, db_session: Session):
+    rider = create_rider(db_session)
+    driver = create_driver(db_session)
+    create_approved_vehicle(db_session, driver.user_id)
+    request_payload = ride_request_payload()
+    request_payload["preferred_time_timezone"] = "Asia/Kuala_Lumpur"
+    trip_payload_data = trip_payload()
+    trip_payload_data["departure_time_timezone"] = "Asia/Kuala_Lumpur"
+
+    request_response = client.post(
+        "/api/ride-requests",
+        json=request_payload,
+        headers=auth_headers_for(rider),
+    )
+    trip_response = client.post(
+        "/api/trips",
+        json=trip_payload_data,
+        headers=auth_headers_for(driver),
+    )
+
+    assert request_response.status_code == 201
+    assert trip_response.status_code == 201
+    assert request_response.json()["preferred_time_timezone"] == "Asia/Kuala_Lumpur"
+    assert trip_response.json()["departure_time_timezone"] == "Asia/Kuala_Lumpur"
 
 
 def test_ride_request_with_coordinates_uses_route_distance(

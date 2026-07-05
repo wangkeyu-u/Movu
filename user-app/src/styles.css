@@ -1,25 +1,26 @@
 :root {
   color-scheme: light;
-  --bg: oklch(1 0 0);
-  --surface: oklch(0.972 0.006 65);
-  --surface-strong: oklch(0.938 0.012 70);
-  --ink: oklch(0.145 0.012 70);
-  --muted: oklch(0.43 0.018 70);
-  --soft: oklch(0.78 0.02 70);
-  --primary: oklch(0.57 0.14 61);
-  --primary-strong: oklch(0.48 0.15 58);
-  --accent: oklch(0.33 0.08 215);
+  --bg: oklch(0.985 0.008 145);
+  --surface: oklch(0.965 0.012 150);
+  --surface-strong: oklch(0.925 0.018 156);
+  --ink: oklch(0.16 0.02 158);
+  --muted: oklch(0.43 0.03 175);
+  --soft: oklch(0.77 0.025 155);
+  --primary: oklch(0.57 0.19 29);
+  --primary-strong: oklch(0.47 0.18 27);
+  --accent: oklch(0.42 0.1 178);
+  --gold: oklch(0.74 0.14 82);
   --positive: oklch(0.54 0.12 150);
   --warning: oklch(0.68 0.13 75);
   --negative: oklch(0.56 0.17 29);
   --info: oklch(0.52 0.12 232);
-  --radius: 14px;
-  --shadow: 0 8px 24px color-mix(in oklch, var(--ink) 10%, transparent);
-  --shadow-lift: 0 18px 42px color-mix(in oklch, var(--ink) 16%, transparent);
+  --radius: 8px;
+  --shadow: 0 10px 26px color-mix(in oklch, var(--ink) 10%, transparent);
+  --shadow-lift: 0 20px 48px color-mix(in oklch, var(--ink) 17%, transparent);
   --ease-apple: cubic-bezier(0.2, 0.8, 0.2, 1);
   font-family:
-    ui-sans-serif,
-    system-ui,
+    "Avenir Next",
+    "Gill Sans",
     -apple-system,
     BlinkMacSystemFont,
     "Segoe UI",
@@ -37,7 +38,9 @@ body {
   min-width: 320px;
   min-height: 100dvh;
   background:
-    linear-gradient(180deg, color-mix(in oklch, var(--primary) 6%, white), white 42%),
+    linear-gradient(180deg, color-mix(in oklch, var(--accent) 10%, white), transparent 36%),
+    linear-gradient(115deg, color-mix(in oklch, var(--primary) 8%, transparent), transparent 42%),
+    url("/assets/images/bg-lakeside-building.jpg") top center / min(1120px, 170vw) auto no-repeat,
     var(--bg);
 }
 
@@ -72,7 +75,7 @@ a {
 
 .boot-screen {
   justify-items: center;
-  font-weight: 800;
+  font-weight: 650;
 }
 
 .auth-screen {
@@ -226,12 +229,52 @@ a {
   box-shadow: 0 18px 52px color-mix(in oklch, black 28%, transparent);
 }
 
+.portal-switcher {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.portal-switcher .ui-button {
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid color-mix(in oklch, var(--soft) 65%, transparent);
+  border-radius: 8px;
+  background: color-mix(in oklch, white 75%, transparent);
+  color: var(--muted);
+  font-weight: 620;
+}
+
+.portal-switcher .ui-button.active {
+  background: var(--ink);
+  color: white;
+  box-shadow: 0 8px 0 color-mix(in oklch, var(--primary-strong) 62%, black);
+}
+
+.portal-note {
+  border-radius: 8px;
+  padding: 10px;
+  background: color-mix(in oklch, var(--accent) 9%, white);
+  color: var(--muted);
+  line-height: 1.38;
+}
+
 .mobile-frame {
   min-height: 100dvh;
   max-width: 760px;
   margin: 0 auto;
   position: relative;
   padding-bottom: 84px;
+  background:
+    linear-gradient(180deg, color-mix(in oklch, white 84%, transparent), color-mix(in oklch, var(--bg) 96%, transparent) 310px),
+    color-mix(in oklch, white 50%, transparent);
+  box-shadow:
+    -1px 0 0 color-mix(in oklch, white 70%, transparent),
+    1px 0 0 color-mix(in oklch, var(--ink) 8%, transparent);
 }
 
 .app-header {
@@ -267,6 +310,12 @@ a {
   gap: 10px;
 }
 
+.brand-lockup > div {
+  display: grid;
+  gap: 2px;
+  line-height: 1.12;
+}
+
 .brand-lockup span,
 .session-chip,
 .quiet-label,
@@ -284,14 +333,18 @@ a {
   height: 38px;
   display: grid;
   place-items: center;
-  border-radius: 11px;
-  background: var(--ink);
-  color: var(--primary);
-  font-weight: 900;
+  border-radius: 8px;
+  background:
+    linear-gradient(145deg, color-mix(in oklch, white 18%, var(--ink)), var(--ink) 58%),
+    var(--ink);
+  color: white;
+  font-weight: 760;
   box-shadow:
     inset 0 1px 0 color-mix(in oklch, white 16%, transparent),
-    0 8px 18px color-mix(in oklch, var(--ink) 18%, transparent);
-  transform: translateZ(0);
+    inset 0 -8px 18px color-mix(in oklch, black 24%, transparent),
+    0 8px 0 color-mix(in oklch, var(--primary-strong) 72%, black),
+    0 16px 24px color-mix(in oklch, var(--ink) 20%, transparent);
+  transform: translateZ(0) rotateX(7deg) rotateY(-10deg);
 }
 
 .brand-mark.large {
@@ -432,7 +485,7 @@ a {
   border-radius: var(--radius);
   background: white;
   border: 1px solid color-mix(in oklch, var(--soft) 65%, transparent);
-  font-weight: 800;
+  font-weight: 680;
   box-shadow:
     inset 0 1px 0 color-mix(in oklch, white 76%, transparent),
     0 8px 20px color-mix(in oklch, var(--ink) 7%, transparent);
@@ -500,7 +553,7 @@ a {
   border-radius: 999px;
   background: white;
   font-size: 0.82rem;
-  font-weight: 800;
+  font-weight: 620;
 }
 
 .service-illustration {
@@ -515,6 +568,240 @@ a {
 .service-band.compact {
   grid-template-columns: 1fr;
   background: color-mix(in oklch, var(--surface) 80%, white);
+}
+
+.experience-hero {
+  min-height: clamp(188px, 34dvh, 310px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 14px;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklch, white 20%, transparent);
+  border-radius: var(--radius);
+  padding: clamp(16px, 4vw, 24px);
+  color: white;
+  background: var(--ink);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, white 22%, transparent),
+    inset 0 -36px 68px color-mix(in oklch, black 26%, transparent),
+    0 18px 42px color-mix(in oklch, var(--ink) 16%, transparent);
+}
+
+.experience-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(90deg, color-mix(in oklch, var(--ink) 78%, transparent), transparent 70%),
+    repeating-linear-gradient(135deg, color-mix(in oklch, white 10%, transparent) 0 1px, transparent 1px 11px);
+  opacity: 0.72;
+}
+
+.experience-hero img {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.95) contrast(1.08);
+  transform: scale(1.02);
+}
+
+.experience-hero.drive::before {
+  background:
+    linear-gradient(90deg, color-mix(in oklch, var(--ink) 82%, transparent), color-mix(in oklch, var(--primary) 22%, transparent) 72%),
+    repeating-linear-gradient(135deg, color-mix(in oklch, white 10%, transparent) 0 1px, transparent 1px 11px);
+}
+
+.hero-copy {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  gap: 8px;
+  max-width: 460px;
+  transform: translateZ(34px);
+}
+
+.hero-copy h1 {
+  margin: 0;
+  max-width: 11ch;
+  color: white;
+  font-size: clamp(2.05rem, 11vw, 3.8rem);
+  line-height: 0.98;
+  font-weight: 720;
+  letter-spacing: 0;
+  text-shadow:
+    0 2px 0 color-mix(in oklch, black 30%, transparent),
+    0 14px 24px color-mix(in oklch, black 28%, transparent);
+}
+
+.hero-copy p {
+  margin: 0;
+  max-width: 31rem;
+  color: color-mix(in oklch, white 82%, var(--gold));
+  line-height: 1.42;
+  font-weight: 520;
+}
+
+.hero-emblem {
+  position: relative;
+  z-index: 2;
+  width: clamp(58px, 18vw, 92px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  align-self: start;
+  border-radius: 8px;
+  background:
+    linear-gradient(145deg, color-mix(in oklch, white 22%, var(--primary)), var(--primary-strong)),
+    var(--primary);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, white 34%, transparent),
+    inset 0 -14px 24px color-mix(in oklch, black 18%, transparent),
+    0 8px 0 color-mix(in oklch, var(--ink) 72%, black),
+    0 20px 34px color-mix(in oklch, black 24%, transparent);
+  transform: translate3d(0, -4px, 52px) rotateX(14deg) rotateY(-18deg);
+}
+
+.workflow-nav {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 8px;
+  padding: 6px;
+  overflow-x: auto;
+  border: 1px solid color-mix(in oklch, var(--soft) 62%, transparent);
+  border-radius: var(--radius);
+  background: color-mix(in oklch, white 82%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, white 80%, transparent),
+    0 10px 24px color-mix(in oklch, var(--ink) 7%, transparent);
+  scrollbar-width: none;
+}
+
+.workflow-nav a {
+  min-width: 92px;
+  min-height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 7px;
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 650;
+  transition:
+    transform 180ms var(--ease-apple),
+    background-color 180ms var(--ease-apple),
+    box-shadow 180ms var(--ease-apple),
+    color 180ms var(--ease-apple);
+}
+
+.workflow-nav a.active {
+  color: white;
+  background:
+    linear-gradient(145deg, color-mix(in oklch, white 10%, var(--ink)), var(--ink));
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, white 20%, transparent),
+    0 7px 0 color-mix(in oklch, var(--primary-strong) 58%, black),
+    0 14px 26px color-mix(in oklch, var(--ink) 18%, transparent);
+  transform: translateY(-2px);
+}
+
+.workflow-nav a:active,
+.bottom-nav a:active,
+.ui-button:active {
+  transform: translateY(1px) scale(0.985);
+}
+
+.match-insight-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, color-mix(in oklch, white 92%, var(--surface)), white);
+}
+
+.match-score-orb {
+  width: 64px;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: white;
+  background:
+    conic-gradient(var(--primary) calc(var(--score, 0.78) * 100%), color-mix(in oklch, var(--soft) 40%, white) 0),
+    var(--ink);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, white 30%, transparent),
+    0 10px 22px color-mix(in oklch, var(--ink) 14%, transparent);
+}
+
+.match-score-orb strong {
+  font-size: 1.05rem;
+}
+
+.match-insight-body {
+  min-width: 0;
+  display: grid;
+  gap: 9px;
+}
+
+.match-insight-card > .ui-button {
+  grid-column: 2;
+  width: fit-content;
+  justify-self: start;
+}
+
+.score-rails {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.score-rails span {
+  position: relative;
+  overflow: hidden;
+  min-height: 28px;
+  border-radius: 7px;
+  padding: 7px 8px;
+  background: color-mix(in oklch, var(--surface) 88%, white);
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 620;
+}
+
+.score-rails span::before {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  width: calc(var(--score, 0) * 100%);
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--primary));
+}
+
+.reason-list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reason-list li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 6px;
+  align-items: start;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.35;
 }
 
 .timeline-panel,
@@ -557,6 +844,7 @@ a {
 .ride-form {
   display: grid;
   gap: 12px;
+  min-width: 0;
 }
 
 .visual-heading {
@@ -596,7 +884,7 @@ a {
   display: grid;
   gap: 7px;
   color: var(--ink);
-  font-weight: 760;
+  font-weight: 620;
   font-size: 0.88rem;
 }
 
@@ -610,11 +898,12 @@ a {
   transform: translateY(1px);
 }
 
-.inline-error {
+.inline-error,
+.inline-success {
   margin: 0;
   border-radius: 12px;
   padding: 11px 12px;
-  font-weight: 760;
+  font-weight: 620;
 }
 
 .inline-error {
@@ -622,9 +911,15 @@ a {
   color: color-mix(in oklch, var(--negative) 70%, black);
 }
 
+.inline-success {
+  background: color-mix(in oklch, var(--positive) 12%, white);
+  color: color-mix(in oklch, var(--positive) 64%, black);
+}
+
 .map-shell {
   display: grid;
   gap: 12px;
+  min-width: 0;
 }
 
 .map-search {
@@ -635,11 +930,41 @@ a {
 }
 
 .map-results {
+  min-width: 0;
+  max-width: 100%;
   display: flex;
   gap: 8px;
   overflow-x: auto;
   padding-bottom: 2px;
   scrollbar-width: none;
+}
+
+.route-presets {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.route-presets .ui-button {
+  min-height: 58px;
+  display: grid;
+  justify-items: start;
+  align-content: center;
+  gap: 3px;
+  text-align: left;
+  border: 1px solid color-mix(in oklch, var(--accent) 18%, transparent);
+  background: color-mix(in oklch, white 84%, var(--surface));
+}
+
+.route-presets span {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.route-presets small {
+  color: var(--muted);
 }
 
 .map-result-button {
@@ -656,7 +981,7 @@ a {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-weight: 780;
+  font-weight: 620;
 }
 
 .map-results small {
@@ -666,7 +991,7 @@ a {
 
 .map-canvas {
   position: relative;
-  height: 320px;
+  height: clamp(340px, 54dvh, 430px);
   overflow: hidden;
   border-radius: var(--radius);
   border: 1px solid color-mix(in oklch, var(--soft) 70%, transparent);
@@ -675,6 +1000,30 @@ a {
   box-shadow:
     inset 0 1px 0 color-mix(in oklch, white 72%, transparent),
     0 14px 32px color-mix(in oklch, var(--ink) 8%, transparent);
+}
+
+.map-canvas::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, color-mix(in oklch, white 8%, transparent), transparent 18%),
+    linear-gradient(0deg, color-mix(in oklch, var(--ink) 8%, transparent), transparent 34%);
+}
+
+.route-line-preview {
+  position: absolute;
+  left: 22%;
+  right: 22%;
+  top: 51%;
+  z-index: 2;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), var(--primary));
+  box-shadow: 0 0 0 4px color-mix(in oklch, white 76%, transparent);
+  rotate: -18deg;
+  transform-origin: center;
 }
 
 .map-canvas img {
@@ -721,7 +1070,7 @@ a {
   background: var(--ink);
   color: white;
   font-size: 0.68rem;
-  font-weight: 800;
+  font-weight: 650;
 }
 
 .pin {
@@ -731,7 +1080,7 @@ a {
   rotate: -45deg;
   background: white;
   color: var(--ink);
-  font-weight: 900;
+  font-weight: 720;
   box-shadow: 0 4px 12px color-mix(in oklch, var(--ink) 28%, transparent);
   animation: pin-drop 440ms var(--ease-apple) both;
 }
@@ -752,6 +1101,15 @@ a {
 
 .map-actions {
   gap: 10px;
+}
+
+.grab-route-panel {
+  align-items: stretch;
+  padding: 10px;
+  border-radius: var(--radius);
+  background: white;
+  border: 1px solid color-mix(in oklch, var(--soft) 60%, transparent);
+  box-shadow: 0 14px 28px color-mix(in oklch, var(--ink) 8%, transparent);
 }
 
 .map-actions > div {
@@ -896,6 +1254,203 @@ a {
   justify-content: space-between;
 }
 
+.sos-console {
+  display: grid;
+  gap: 14px;
+  padding: 14px;
+  border: 1px solid color-mix(in oklch, var(--negative) 16%, transparent);
+  background:
+    linear-gradient(180deg, color-mix(in oklch, var(--negative) 8%, white), white 38%);
+}
+
+.sos-trip-card {
+  display: grid;
+  gap: 6px;
+  padding: 13px;
+  border-radius: var(--radius);
+  background: white;
+  border: 1px solid color-mix(in oklch, var(--soft) 65%, transparent);
+}
+
+.sos-trip-card span,
+.sos-trip-card small {
+  color: var(--muted);
+}
+
+.sos-panic-button {
+  min-height: 74px;
+  font-size: 1.08rem;
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, white 28%, transparent),
+    0 8px 0 color-mix(in oklch, var(--negative) 70%, black),
+    0 20px 38px color-mix(in oklch, var(--negative) 22%, transparent);
+}
+
+.confirm-sheet {
+  position: fixed;
+  z-index: 30;
+  inset: 0;
+  display: grid;
+  align-items: end;
+  padding: 16px;
+  background: color-mix(in oklch, black 42%, transparent);
+}
+
+.confirm-panel {
+  position: relative;
+  display: grid;
+  gap: 12px;
+  padding: 20px;
+  border-radius: 12px 12px 8px 8px;
+  background: white;
+  box-shadow: 0 -18px 48px color-mix(in oklch, black 24%, transparent);
+}
+
+.confirm-panel h2,
+.confirm-panel p {
+  margin: 0;
+}
+
+.confirm-panel p {
+  color: var(--muted);
+  line-height: 1.42;
+}
+
+.sheet-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+
+.sos-coordinate {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.sos-coordinate span {
+  min-width: 0;
+  padding: 10px;
+  border-radius: 8px;
+  background: var(--surface);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.network-panel {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.network-panel .panel-title > div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.network-panel .panel-title span {
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.network-roster {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.network-roster-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  padding: 12px;
+  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid color-mix(in oklch, var(--soft) 72%, transparent);
+}
+
+.network-roster-card div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.network-roster-card span,
+.network-roster-card small {
+  color: var(--muted);
+  font-size: 0.78rem;
+  overflow-wrap: anywhere;
+}
+
+.driver-location-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
+  background: color-mix(in oklch, var(--accent) 9%, white);
+}
+
+.driver-location-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.driver-location-actions .ui-button {
+  white-space: nowrap;
+}
+
+.driver-location-card div,
+.message-bubble {
+  display: grid;
+  gap: 4px;
+}
+
+.driver-location-card span,
+.message-bubble span {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.message-list {
+  max-height: 260px;
+  display: grid;
+  gap: 8px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.message-bubble {
+  width: min(92%, 430px);
+  padding: 10px;
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.message-bubble p {
+  margin: 0;
+  line-height: 1.42;
+}
+
+.message-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.message-form input {
+  min-width: 0;
+  border: 1px solid color-mix(in oklch, var(--soft) 70%, transparent);
+  border-radius: 8px;
+  padding: 0 12px;
+  background: white;
+}
+
 .account-card {
   display: flex;
   align-items: center;
@@ -917,7 +1472,7 @@ a {
   background: var(--primary);
   color: white;
   font-size: 1.4rem;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .bottom-nav {
@@ -928,7 +1483,7 @@ a {
   transform: translateX(-50%);
   width: min(760px, 100%);
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(var(--nav-count, 3), 1fr);
   gap: 3px;
   padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
   background: color-mix(in oklch, white 88%, transparent);
@@ -948,7 +1503,7 @@ a {
   border-radius: 13px;
   color: var(--muted);
   font-size: 0.72rem;
-  font-weight: 850;
+  font-weight: 620;
   transition:
     transform 240ms var(--ease-apple),
     background-color 240ms var(--ease-apple),
@@ -978,7 +1533,7 @@ a {
   border-radius: 999px;
   background: white;
   border: 1px solid color-mix(in oklch, var(--soft) 70%, transparent);
-  font-weight: 850;
+  font-weight: 620;
   box-shadow: 0 8px 20px color-mix(in oklch, var(--ink) 8%, transparent);
 }
 
@@ -1095,7 +1650,30 @@ a {
   }
 
   .map-canvas {
-    height: 300px;
+    height: 360px;
+  }
+
+  .route-presets {
+    grid-template-columns: 1fr;
+  }
+
+  .driver-location-card {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .network-roster {
+    grid-template-columns: 1fr;
+  }
+
+  .driver-location-actions {
+    grid-column: 1 / -1;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .driver-location-actions .ui-button {
+    width: 100%;
   }
 
   .visual-heading {
@@ -1108,12 +1686,62 @@ a {
     width: 68px;
   }
 
+  .experience-hero {
+    min-height: 176px;
+    grid-template-columns: minmax(0, 1fr) 58px;
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(2.2rem, 15vw, 3.25rem);
+  }
+
+  .workflow-nav {
+    grid-auto-columns: minmax(88px, 1fr);
+  }
+
+  .match-insight-card {
+    grid-template-columns: 1fr;
+  }
+
+  .match-score-orb {
+    width: 58px;
+  }
+
+  .match-insight-card > .ui-button {
+    grid-column: 1;
+    width: 100%;
+  }
+
   .safety-hero {
     grid-template-columns: 1fr auto;
   }
 
   .safety-hero img {
     display: none;
+  }
+}
+
+@media (max-width: 360px) {
+  .app-header {
+    gap: 8px;
+    padding-inline: 10px;
+  }
+
+  .brand-lockup > div {
+    display: none;
+  }
+
+  .header-actions {
+    gap: 6px;
+  }
+
+  .language-switcher {
+    min-width: 76px;
+  }
+
+  .language-switcher .ui-select {
+    min-height: 36px;
+    padding-inline: 8px;
   }
 }
 
