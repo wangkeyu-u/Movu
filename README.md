@@ -8,8 +8,8 @@ MovU is a campus carpooling platform for Taylor's University students and staff.
 - Admin dashboard: React, TypeScript, Vite, react-i18next
 - User app: React, TypeScript, Vite, PWA, OpenStreetMap tiles, Nominatim search
 - Shared UI: `packages/ui` with reusable MovU primitives
-- Testing: pytest with isolated SQLite, Playwright E2E against Docker backend
-- Deployment: Docker Compose
+- Testing: pytest with isolated SQLite only for test isolation, Playwright E2E against Docker backend
+- Deployment: Docker Compose with MySQL
 
 ## UI System
 
