@@ -10,22 +10,44 @@ Campus carpooling for Taylor's University. MovU verifies riders and drivers, mat
 
 Prerequisites:
 
-- Node.js 22+
 - Docker Desktop, OrbStack, or Colima
+- Git and curl
+- Node.js 22+ only if you want to run local npm scripts outside Docker
 
-Install dependencies once:
+One command from GitHub:
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/wangkeyu-u/Movu/main/scripts/bootstrap.sh)"
+```
+
+This command clones MovU, builds the Docker images, starts MySQL, the FastAPI backend, the admin dashboard, and the user app, waits for the backend health check, and seeds local sample accounts.
+
+If the repository is private, use GitHub CLI after logging in with `gh auth login`:
+
+```bash
+gh repo clone wangkeyu-u/Movu && cd Movu && bash scripts/bootstrap.sh
+```
+
+If the repository is already cloned, run:
+
+```bash
+bash scripts/bootstrap.sh
+```
+
+For local Node-based development scripts, install dependencies once:
 
 ```bash
 npm run setup
 ```
 
-Start the full MovU stack with one command:
+Daily startup after setup can use either command:
 
 ```bash
+bash scripts/bootstrap.sh
 npm run dev
 ```
 
-This starts MySQL, the FastAPI backend, the admin dashboard, and the user app with Docker Compose. It also waits for the backend health check and seeds local sample accounts.
+If your Docker context is `colima` and Colima is not running, both `bash scripts/bootstrap.sh` and `npm run dev` will try to start it automatically.
 
 Open:
 
@@ -46,8 +68,6 @@ npm run logs
 npm run stop
 npm run seed
 ```
-
-If your Docker context is `colima` and Colima is not running, `npm run dev` will try to start it automatically.
 
 ## Tech Stack
 
