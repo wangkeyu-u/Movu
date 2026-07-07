@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "setup": "npm ci && npm --prefix user-app ci && npm --prefix admin-dashboard ci",
+    "bootstrap": "bash scripts/bootstrap.sh",
     "dev": "node scripts/dev.mjs",
     "start": "npm run dev",
     "seed": "docker compose exec -T backend python -m app.db.seed",
