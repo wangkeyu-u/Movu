@@ -2,6 +2,8 @@
 
 Use this guide to draw the business and software logic for the Taylor's University campus carpooling system.
 
+For a connection-by-connection checklist, see `docs/DIAGRAM_RELATIONSHIPS.md`.
+
 ## 1. Use Case Diagram
 
 Actors:
