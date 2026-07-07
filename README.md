@@ -6,6 +6,49 @@ Campus carpooling for Taylor's University. MovU verifies riders and drivers, mat
 
 **Built for:** student mobility, driver-rider matching, vehicle approval, live location, safety workflows, admin operations.
 
+## Quick Start
+
+Prerequisites:
+
+- Node.js 22+
+- Docker Desktop, OrbStack, or Colima
+
+Install dependencies once:
+
+```bash
+npm run setup
+```
+
+Start the full MovU stack with one command:
+
+```bash
+npm run dev
+```
+
+This starts MySQL, the FastAPI backend, the admin dashboard, and the user app with Docker Compose. It also waits for the backend health check and seeds local sample accounts.
+
+Open:
+
+- User app: `http://localhost:5174`
+- Admin dashboard: `http://localhost:5173`
+- Backend API: `http://localhost:8000`
+
+Sample login:
+
+- Admin: `admin@taylors.edu.my` / `Password123`
+- Rider: `aina@sd.taylors.edu.my` / `Password123`
+- Driver: `daniel@sd.taylors.edu.my` / `Password123`
+
+Useful commands:
+
+```bash
+npm run logs
+npm run stop
+npm run seed
+```
+
+If your Docker context is `colima` and Colima is not running, `npm run dev` will try to start it automatically.
+
 ## Tech Stack
 
 - Backend: FastAPI, SQLAlchemy, MySQL, JWT, SMTP email, OSRM routing, WebSocket
@@ -110,7 +153,7 @@ The user app is mobile-first and PWA-ready. It includes email login/registration
 ## Docker
 
 ```bash
-docker compose up --build
+npm run dev
 ```
 
 Local Docker verification has been run with Colima-backed Docker:
@@ -124,7 +167,7 @@ docker compose up -d
 Then seed the database:
 
 ```bash
-docker compose exec backend python -m app.db.seed
+npm run seed
 ```
 
 Services:
