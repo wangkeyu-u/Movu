@@ -18,8 +18,32 @@
     "status": "Status",
     "createdAt": "Dicipta",
     "language": "Bahasa",
+    "notifications": "Notifikasi",
+    "searchRecords": "Cari rekod",
+    "showingRecords": "Memaparkan {{shown}} daripada {{total}}",
+    "noSearchResults": "Tiada rekod sepadan",
+    "previous": "Sebelum",
+    "next": "Seterusnya",
+    "pageStatus": "Halaman {{page}} daripada {{pages}}",
+    "exportCsv": "Eksport CSV",
     "save": "Simpan",
     "cancel": "Batal"
+  },
+  "notifications": {
+    "title": "Notifikasi",
+    "markAll": "Tanda semua dibaca",
+    "empty": "Tiada notifikasi lagi",
+    "enableDesktop": "Aktifkan amaran desktop",
+    "desktopEnabled": "Amaran desktop aktif",
+    "desktopUnsupported": "Amaran desktop tidak tersedia",
+    "categories": {
+      "verification": "Pengesahan",
+      "match": "Padanan",
+      "trip": "Perjalanan",
+      "safety": "Keselamatan",
+      "operations": "Operasi",
+      "system": "Sistem"
+    }
   },
   "login": {
     "title": "Log masuk pentadbir",
@@ -118,7 +142,15 @@
     "trip": "Perjalanan",
     "location": "Lokasi",
     "triggered": "Dicetuskan",
-    "resolved": "Diselesaikan"
+    "resolved": "Diselesaikan",
+    "liveAlert": "Amaran SOS langsung",
+    "liveAlertBody": "Perjalanan #{{tripId}}, pengguna #{{userId}} perlu disemak segera.",
+    "openMap": "Buka peta",
+    "assigned": "Ditugaskan",
+    "timeline": "Respons",
+    "responseNote": "Nota respons",
+    "notePlaceholder": "Tambah nota respons",
+    "noResponseNote": "Tiada nota respons lagi"
   },
   "reports": {
     "title": "Penilaian dan laporan",

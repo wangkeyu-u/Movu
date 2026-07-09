@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import type { Point } from "../api/types";
 import {
   CAMPUS_STOPS,
+  CAMPUS_PICKUP_POINTS,
   ROUTE_PRESETS,
   SERVICE_BOUNDS,
   SERVICE_RADIUS_KM,
@@ -179,6 +180,18 @@ export function CampusMapPicker({ origin, destination, onChange }: CampusMapPick
             <small>{haversineDistanceKm(TAYLORS_CENTER, point)}km</small>
           </Button>
         ))}
+      </div>
+
+      <div className="campus-pickups" aria-label={t("map.campusPickups")}>
+        <strong>{t("map.campusPickups")}</strong>
+        <div>
+          {CAMPUS_PICKUP_POINTS.map((point) => (
+            <Button key={point.label} variant="secondary" type="button" onClick={() => choosePoint(point)}>
+              <MapPin size={14} aria-hidden="true" />
+              {point.label}
+            </Button>
+          ))}
+        </div>
       </div>
 
       <div className="route-presets" aria-label={t("map.routePresets")}>

@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import admin, auth, location, matches, network, payments, reports, ride_requests, sos, trips, users, vehicles
+from app.api import admin, auth, location, matches, network, notifications, payments, reports, ride_requests, sos, trips, users, vehicles
 from app.core.config import settings
 from app.core.rate_limit import RateLimitMiddleware
 
@@ -24,6 +24,7 @@ app.include_router(location.router, prefix=settings.api_prefix)
 app.include_router(location.ws_router)
 app.include_router(matches.router, prefix=settings.api_prefix)
 app.include_router(network.router, prefix=settings.api_prefix)
+app.include_router(notifications.router, prefix=settings.api_prefix)
 app.include_router(payments.router, prefix=settings.api_prefix)
 app.include_router(reports.router, prefix=settings.api_prefix)
 app.include_router(ride_requests.router, prefix=settings.api_prefix)

@@ -140,6 +140,21 @@ export interface SOSEvent {
   status: SOSStatus;
   triggered_time: string;
   resolved_time?: string | null;
+  assigned_admin_id?: number | null;
+  response_note?: string | null;
+  status_updated_at?: string | null;
+}
+
+export interface Notification {
+  notification_id: number;
+  user_id: number;
+  title: string;
+  body: string;
+  category: string;
+  entity_type?: string | null;
+  entity_id?: string | null;
+  read_at?: string | null;
+  created_at: string;
 }
 
 export interface RatingReport {

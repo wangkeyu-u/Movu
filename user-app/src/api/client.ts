@@ -1,4 +1,4 @@
-import type { AuthResponse, LocationLog, Match, RatingReport, RideRequest, SOSEvent, Trip, TripMessage, TripNetwork, User, Vehicle } from "./types";
+import type { AuthResponse, LocationLog, Match, Notification, RatingReport, RideRequest, SOSEvent, Trip, TripMessage, TripNetwork, User, Vehicle } from "./types";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:8000/api";
 const TOKEN_KEY = "movu_user_token";
@@ -107,6 +107,12 @@ export const api = {
       method: "POST",
       body: JSON.stringify(payload)
     }),
+  notifications: () => request<Notification[]>("/notifications/me"),
+  unreadNotifications: () => request<{ unread_count: number }>("/notifications/me/unread-count"),
+  markNotificationRead: (notificationId: number) =>
+    request<Notification>(`/notifications/${notificationId}/read`, { method: "PATCH" }),
+  markAllNotificationsRead: () =>
+    request<{ unread_count: number }>("/notifications/me/read-all", { method: "PATCH" }),
   reports: () => request<RatingReport[]>("/reports/me?direction=given"),
   createRating: (payload: Record<string, unknown>) =>
     request<RatingReport>("/reports/ratings", {

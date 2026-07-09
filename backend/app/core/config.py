@@ -51,6 +51,7 @@ class Settings(BaseSettings):
     )
     rate_limit_requests: int = 600
     rate_limit_window_seconds: int = 60
+    redis_url: str | None = None
 
     cors_origins: Annotated[list[str], NoDecode] = [
         "http://localhost:5173",

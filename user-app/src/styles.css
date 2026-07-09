@@ -33,10 +33,18 @@
   box-sizing: border-box;
 }
 
+html {
+  width: 100%;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100dvh;
+  overflow-x: hidden;
   background:
     linear-gradient(180deg, color-mix(in oklch, var(--accent) 10%, white), transparent 36%),
     linear-gradient(115deg, color-mix(in oklch, var(--primary) 8%, transparent), transparent 42%),
@@ -44,10 +52,22 @@ body {
     var(--bg);
 }
 
+#root {
+  min-width: 0;
+  width: 100%;
+  overflow-x: clip;
+}
+
 button,
 input,
 select {
   font: inherit;
+}
+
+input,
+select,
+textarea {
+  max-width: 100%;
 }
 
 button {
@@ -70,7 +90,11 @@ a {
   display: grid;
   align-content: center;
   gap: 22px;
-  padding: 22px;
+  padding:
+    max(22px, env(safe-area-inset-top))
+    max(22px, env(safe-area-inset-right))
+    max(22px, env(safe-area-inset-bottom))
+    max(22px, env(safe-area-inset-left));
 }
 
 .boot-screen {
@@ -265,10 +289,12 @@ a {
 
 .mobile-frame {
   min-height: 100dvh;
+  width: min(760px, 100%);
   max-width: 760px;
   margin: 0 auto;
   position: relative;
-  padding-bottom: 84px;
+  padding-bottom: calc(84px + env(safe-area-inset-bottom));
+  overflow-x: clip;
   background:
     linear-gradient(180deg, color-mix(in oklch, white 84%, transparent), color-mix(in oklch, var(--bg) 96%, transparent) 310px),
     color-mix(in oklch, white 50%, transparent);
@@ -285,7 +311,11 @@ a {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 14px 16px;
+  padding:
+    calc(14px + env(safe-area-inset-top))
+    max(16px, env(safe-area-inset-right))
+    14px
+    max(16px, env(safe-area-inset-left));
   background: color-mix(in oklch, white 86%, transparent);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid color-mix(in oklch, var(--soft) 55%, transparent);
@@ -308,12 +338,21 @@ a {
 
 .brand-lockup {
   gap: 10px;
+  min-width: 0;
 }
 
 .brand-lockup > div {
+  min-width: 0;
   display: grid;
   gap: 2px;
   line-height: 1.12;
+}
+
+.brand-lockup strong,
+.brand-lockup span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .brand-lockup span,
@@ -356,6 +395,109 @@ a {
 
 .header-actions {
   gap: 8px;
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+.notification-tray {
+  position: relative;
+}
+
+.notification-trigger {
+  position: relative;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--negative);
+  color: white;
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.notification-popover {
+  position: fixed;
+  z-index: 10;
+  top: calc(70px + env(safe-area-inset-top));
+  right: max(12px, env(safe-area-inset-right));
+  left: max(12px, env(safe-area-inset-left));
+  width: auto;
+  max-width: 420px;
+  margin-left: auto;
+  max-height: calc(100dvh - 92px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  overflow: auto;
+  padding: 14px;
+  box-shadow: var(--shadow-lift);
+}
+
+.notification-head,
+.notification-item {
+  display: grid;
+}
+
+.notification-head {
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.notification-head .ui-button {
+  gap: 6px;
+}
+
+.notification-list {
+  display: grid;
+  gap: 8px;
+}
+
+.notification-item {
+  width: 100%;
+  gap: 4px;
+  padding: 12px;
+  border: 1px solid color-mix(in oklch, var(--soft) 58%, transparent);
+  border-radius: var(--radius);
+  background: color-mix(in oklch, white 88%, var(--surface));
+  color: var(--ink);
+  text-align: left;
+}
+
+.notification-item.unread {
+  border-color: color-mix(in oklch, var(--primary) 45%, var(--soft));
+  background: color-mix(in oklch, var(--primary) 9%, white);
+}
+
+.notification-item span,
+.notification-item small {
+  color: var(--muted);
+}
+
+.notification-item span {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.notification-item strong,
+.notification-item p {
+  margin: 0;
+}
+
+.notification-item p {
+  line-height: 1.35;
+}
+
+.desktop-notification-button {
+  width: 100%;
+  margin-bottom: 10px;
 }
 
 .language-switcher {
@@ -383,7 +525,12 @@ a {
 }
 
 .app-main {
-  padding: 14px 16px 24px;
+  padding:
+    14px
+    max(16px, env(safe-area-inset-right))
+    24px
+    max(16px, env(safe-area-inset-left));
+  min-width: 0;
 }
 
 .page-stack {
@@ -939,6 +1086,31 @@ a {
   scrollbar-width: none;
 }
 
+.campus-pickups {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid color-mix(in oklch, var(--accent) 16%, transparent);
+  border-radius: var(--radius);
+  background: color-mix(in oklch, var(--accent) 7%, white);
+}
+
+.campus-pickups > strong {
+  font-size: 0.82rem;
+}
+
+.campus-pickups > div {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.campus-pickups .ui-button {
+  min-width: max-content;
+  gap: 6px;
+}
+
 .route-presets {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -991,7 +1163,7 @@ a {
 
 .map-canvas {
   position: relative;
-  height: clamp(340px, 54dvh, 430px);
+  height: clamp(300px, 52dvh, 430px);
   overflow: hidden;
   border-radius: var(--radius);
   border: 1px solid color-mix(in oklch, var(--soft) 70%, transparent);
@@ -1292,7 +1464,11 @@ a {
   inset: 0;
   display: grid;
   align-items: end;
-  padding: 16px;
+  padding:
+    max(16px, env(safe-area-inset-top))
+    max(16px, env(safe-area-inset-right))
+    max(16px, env(safe-area-inset-bottom))
+    max(16px, env(safe-area-inset-left));
   background: color-mix(in oklch, black 42%, transparent);
 }
 
@@ -1301,6 +1477,8 @@ a {
   display: grid;
   gap: 12px;
   padding: 20px;
+  max-height: calc(100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  overflow-y: auto;
   border-radius: 12px 12px 8px 8px;
   background: white;
   box-shadow: 0 -18px 48px color-mix(in oklch, black 24%, transparent);
@@ -1485,7 +1663,11 @@ a {
   display: grid;
   grid-template-columns: repeat(var(--nav-count, 3), 1fr);
   gap: 3px;
-  padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+  padding:
+    8px
+    max(10px, env(safe-area-inset-right))
+    calc(8px + env(safe-area-inset-bottom))
+    max(10px, env(safe-area-inset-left));
   background: color-mix(in oklch, white 88%, transparent);
   backdrop-filter: blur(18px);
   border-top: 1px solid color-mix(in oklch, var(--soft) 65%, transparent);
@@ -1526,8 +1708,8 @@ a {
 
 .session-chip {
   position: fixed;
-  right: 12px;
-  bottom: 78px;
+  right: max(12px, env(safe-area-inset-right));
+  bottom: calc(78px + env(safe-area-inset-bottom));
   z-index: 9;
   padding: 6px 9px;
   border-radius: 999px;
@@ -1634,6 +1816,54 @@ a {
 }
 
 @media (max-width: 430px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+
+  .auth-screen {
+    align-content: start;
+    padding-top: max(18px, env(safe-area-inset-top));
+  }
+
+  .auth-shell {
+    gap: 16px;
+  }
+
+  .auth-panel,
+  .timeline-panel,
+  .records-panel,
+  .ride-form,
+  .map-shell,
+  .network-panel,
+  .identity-card,
+  .safety-hero,
+  .account-card {
+    padding: 12px;
+  }
+
+  .portal-switcher .ui-button {
+    min-height: 44px;
+    padding-inline: 8px;
+  }
+
+  .app-main {
+    padding-inline: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+  }
+
+  .page-stack {
+    gap: 12px;
+  }
+
+  .section-heading h1,
+  .identity-card h1,
+  .safety-hero h1,
+  .account-card h1 {
+    font-size: clamp(1.55rem, 9vw, 1.9rem);
+  }
+
   .route-summary,
   .split-fields {
     grid-template-columns: 1fr;
@@ -1650,7 +1880,7 @@ a {
   }
 
   .map-canvas {
-    height: 360px;
+    height: min(360px, 52dvh);
   }
 
   .route-presets {
@@ -1673,6 +1903,14 @@ a {
   }
 
   .driver-location-actions .ui-button {
+    width: 100%;
+  }
+
+  .message-form {
+    grid-template-columns: 1fr;
+  }
+
+  .message-form .ui-button {
     width: 100%;
   }
 
@@ -1719,12 +1957,17 @@ a {
   .safety-hero img {
     display: none;
   }
+
+  .account-card {
+    align-items: flex-start;
+  }
 }
 
 @media (max-width: 360px) {
   .app-header {
     gap: 8px;
-    padding-inline: 10px;
+    padding-inline: max(10px, env(safe-area-inset-left));
+    padding-right: max(10px, env(safe-area-inset-right));
   }
 
   .brand-lockup > div {
@@ -1742,6 +1985,82 @@ a {
   .language-switcher .ui-select {
     min-height: 36px;
     padding-inline: 8px;
+  }
+
+  .header-actions .ui-button-icon {
+    width: 36px;
+    height: 36px;
+    min-height: 36px;
+  }
+
+  .bottom-nav {
+    gap: 2px;
+    padding-top: 6px;
+  }
+
+  .bottom-nav a {
+    min-height: 50px;
+    font-size: 0.66rem;
+  }
+
+  .session-chip {
+    display: none;
+  }
+
+  .score-rails,
+  .trust-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-height: 700px) and (max-width: 430px) {
+  .experience-hero {
+    min-height: 150px;
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(1.9rem, 12vw, 2.6rem);
+  }
+
+  .map-canvas {
+    height: min(320px, 46dvh);
+  }
+}
+
+@media (orientation: landscape) and (max-height: 520px) {
+  .app-header {
+    position: static;
+    padding-top: 10px;
+  }
+
+  .mobile-frame {
+    padding-bottom: 72px;
+  }
+
+  .app-main {
+    padding-top: 10px;
+  }
+
+  .experience-hero,
+  .identity-card,
+  .safety-hero {
+    min-height: 132px;
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(1.8rem, 7vw, 2.6rem);
+  }
+
+  .map-canvas {
+    height: 260px;
+  }
+
+  .bottom-nav a {
+    min-height: 46px;
+  }
+
+  .session-chip {
+    display: none;
   }
 }
 

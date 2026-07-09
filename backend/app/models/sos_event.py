@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, Enum, Float, ForeignKey, Integer
+from sqlalchemy import DateTime, Enum, Float, ForeignKey, Integer, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base
@@ -28,6 +28,10 @@ class SOSEvent(Base):
         default=utc_now,
     )
     resolved_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
+    assigned_admin_id: Mapped[int] = mapped_column(ForeignKey("users.user_id"), nullable=True, index=True)
+    response_note: Mapped[str] = mapped_column(Text, nullable=True)
+    status_updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
 
-    user = relationship("User", back_populates="sos_events")
+    user = relationship("User", foreign_keys=[user_id], back_populates="sos_events")
     trip = relationship("Trip", back_populates="sos_events")
+    assigned_admin = relationship("User", foreign_keys=[assigned_admin_id])

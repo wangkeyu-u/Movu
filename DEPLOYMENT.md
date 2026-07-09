@@ -5,6 +5,7 @@ This guide describes how to run MovU as a real deployable system with Docker Com
 ## Services
 
 - `mysql`: MySQL 8.4 database
+- `redis`: shared rate limiting state
 - `backend`: FastAPI API, Alembic migrations, WebSocket endpoints
 - `admin-dashboard`: React admin dashboard served by Nginx
 - `user-app`: React PWA served by Nginx
@@ -50,6 +51,7 @@ Required values:
 - `SMTP_HOST`
 - `SMTP_FROM_EMAIL`
 - `OSRM_BASE_URL`
+- `REDIS_URL` when running more than one backend replica or sharing limits across instances
 
 3. Build and start.
 
@@ -125,6 +127,7 @@ Production mode enforces:
 - no simulated payment completion
 - coordinates required for ride requests and trips
 - rider and driver core actions require admin-approved account status
+- Redis-backed rate limiting when `REDIS_URL` is configured
 
 Payment collection remains disabled until an approved payment provider is configured and certified.
 

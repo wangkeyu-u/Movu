@@ -7,6 +7,7 @@ from app.models.enums import UserRole
 from app.models.user import User
 from app.schemas.user import UserRead, UserVerificationUpdate
 from app.services.audit import write_audit_log
+from app.services.notifications import create_notification
 
 
 router = APIRouter(prefix="/users", tags=["users"])
@@ -61,6 +62,15 @@ def update_user_verification(
         request=request,
         metadata={"verification_status": payload.verification_status.value},
     )
+    create_notification(
+        db,
+        user_id=user.user_id,
+        title="Account review updated",
+        body=f"Your MovU account verification is now {payload.verification_status.value}.",
+        category="verification",
+        entity_type="user",
+        entity_id=user.user_id,
+    )
     db.add(user)
     db.commit()
     db.refresh(user)
@@ -81,6 +91,15 @@ def ban_user(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Admin users cannot be banned")
 
     user.is_banned = True
+    create_notification(
+        db,
+        user_id=user.user_id,
+        title="Account access suspended",
+        body="Your MovU account has been banned by an administrator.",
+        category="verification",
+        entity_type="user",
+        entity_id=user.user_id,
+    )
     write_audit_log(
         db,
         actor=admin_user,
@@ -107,6 +126,15 @@ def unban_user(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
     user.is_banned = False
+    create_notification(
+        db,
+        user_id=user.user_id,
+        title="Account access restored",
+        body="Your MovU account has been unbanned.",
+        category="verification",
+        entity_type="user",
+        entity_id=user.user_id,
+    )
     write_audit_log(
         db,
         actor=admin_user,
