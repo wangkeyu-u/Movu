@@ -58,7 +58,7 @@ MovU is implemented as a production-ready campus carpooling platform for Taylor'
 | Gap | Impact | Next Action |
 |---|---|---|
 | Payment provider configuration | Real money collection/refunds remain disabled | Configure and certify an approved provider before enabling payment collection |
-| Rate limiter is in-memory | Fine for one backend instance; not enough for multiple replicas | Replace with Redis-backed rate limiting before horizontal scaling |
+| Redis infrastructure | Shared rate limiting is implemented when `REDIS_URL` is configured, but production still needs a managed Redis instance | Provision Redis before horizontal scaling |
 
 ## Repeatable Verification Commands
 

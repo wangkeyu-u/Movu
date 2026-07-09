@@ -16,6 +16,7 @@ import { NavLink, Outlet } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 import { LanguageSwitcher } from "../components/LanguageSwitcher";
+import { NotificationTray } from "../components/NotificationTray";
 import { useAuth } from "./AuthProvider";
 
 const navItems = [
@@ -64,6 +65,7 @@ export function AppLayout() {
             <small>{user?.email}</small>
           </div>
           <LanguageSwitcher />
+          <NotificationTray />
           <Button className="logout-button" onClick={logout} type="button" variant="ghost">
             <LogOut size={16} aria-hidden="true" />
             <span>{t("common.logout")}</span>

@@ -1,10 +1,11 @@
 import { Button } from "@movu/ui";
-import { Bell, Clock3, Home, LogOut, ParkingCircle, Route, UserRound } from "lucide-react";
+import { Clock3, Home, LogOut, ParkingCircle, Route, UserRound } from "lucide-react";
 import type { CSSProperties } from "react";
 import { useTranslation } from "react-i18next";
 import { NavLink, Outlet } from "react-router-dom";
 
 import { LanguageSwitcher } from "../components/LanguageSwitcher";
+import { NotificationTray } from "../components/NotificationTray";
 import { useAuth } from "./AuthProvider";
 
 const riderNavItems = [
@@ -37,9 +38,7 @@ export function AppLayout() {
         </div>
         <div className="header-actions">
           <LanguageSwitcher />
-          <Button variant="icon" type="button" aria-label={t("common.notifications")}>
-            <Bell size={18} aria-hidden="true" />
-          </Button>
+          <NotificationTray />
           <Button variant="icon" type="button" onClick={logout} aria-label={t("common.logout")}>
             <LogOut size={18} aria-hidden="true" />
           </Button>

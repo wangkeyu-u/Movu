@@ -13,6 +13,7 @@ class SOSCreate(BaseModel):
 
 class SOSStatusUpdate(BaseModel):
     status: SOSStatus
+    response_note: str | None = Field(default=None, max_length=600)
 
     @field_validator("status")
     @classmethod
@@ -31,5 +32,8 @@ class SOSRead(BaseModel):
     status: SOSStatus
     triggered_time: datetime
     resolved_time: datetime | None
+    assigned_admin_id: int | None
+    response_note: str | None
+    status_updated_at: datetime | None
 
     model_config = ConfigDict(from_attributes=True)

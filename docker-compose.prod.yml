@@ -15,6 +15,18 @@ services:
       timeout: 5s
       retries: 10
 
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
   backend:
     build:
       context: ./backend
@@ -37,8 +49,11 @@ services:
       SERVICE_AREA_RADIUS_KM: ${SERVICE_AREA_RADIUS_KM}
       RATE_LIMIT_REQUESTS: ${RATE_LIMIT_REQUESTS}
       RATE_LIMIT_WINDOW_SECONDS: ${RATE_LIMIT_WINDOW_SECONDS}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
     depends_on:
       mysql:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     ports:
       - "${BACKEND_PORT:-8000}:8000"
@@ -76,3 +91,4 @@ services:
 
 volumes:
   mysql_data:
+  redis_data:

@@ -8,6 +8,7 @@ from app.models.user import User
 from app.models.vehicle import Vehicle
 from app.schemas.vehicle import VehicleCreate, VehicleRead, VehicleVerificationUpdate
 from app.services.audit import write_audit_log
+from app.services.notifications import create_notification, notify_admins
 
 
 router = APIRouter(prefix="/vehicles", tags=["vehicles"])
@@ -33,6 +34,15 @@ def register_vehicle(
         verification_status=VerificationStatus.pending,
     )
     db.add(vehicle)
+    db.flush()
+    notify_admins(
+        db,
+        title="Vehicle needs review",
+        body=f"{current_user.name} submitted {payload.plate_number} for approval.",
+        category="verification",
+        entity_type="vehicle",
+        entity_id=vehicle.vehicle_id,
+    )
     db.commit()
     db.refresh(vehicle)
     return vehicle
@@ -100,6 +110,15 @@ def update_vehicle_verification(
         entity_id=vehicle.vehicle_id,
         request=request,
         metadata={"verification_status": payload.verification_status.value},
+    )
+    create_notification(
+        db,
+        user_id=vehicle.driver_id,
+        title="Vehicle review updated",
+        body=f"Your vehicle {vehicle.plate_number} is now {payload.verification_status.value}.",
+        category="verification",
+        entity_type="vehicle",
+        entity_id=vehicle.vehicle_id,
     )
     db.add(vehicle)
     db.commit()

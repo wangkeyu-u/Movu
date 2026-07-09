@@ -15,8 +15,18 @@ export const SERVICE_BOUNDS = {
   maxLongitude: 101.8857
 };
 
-export const CAMPUS_STOPS: Point[] = [
+export const CAMPUS_PICKUP_POINTS: Point[] = [
   TAYLORS_CENTER,
+  { label: "Taylor's Lakeside Main Gate", latitude: 3.0642, longitude: 101.6169 },
+  { label: "Syopz Mall Entrance", latitude: 3.0653, longitude: 101.6162 },
+  { label: "Student Life Centre", latitude: 3.0637, longitude: 101.6154 },
+  { label: "Lakeside Campus Block B", latitude: 3.0651, longitude: 101.6149 },
+  { label: "Residensi U", latitude: 3.0664, longitude: 101.6121 },
+  { label: "DK Senza", latitude: 3.0658, longitude: 101.6123 }
+];
+
+export const CAMPUS_STOPS: Point[] = [
+  ...CAMPUS_PICKUP_POINTS,
   { label: "Sunway Pyramid", latitude: 3.0738, longitude: 101.607 },
   { label: "Sunway Medical Centre", latitude: 3.0678, longitude: 101.6039 },
   { label: "Subang Jaya LRT", latitude: 3.0845, longitude: 101.5881 },
@@ -29,10 +39,10 @@ export const CAMPUS_STOPS: Point[] = [
 ];
 
 export const ROUTE_PRESETS: Array<{ label: string; origin: Point; destination: Point }> = [
-  { label: "Taylor's -> Sunway Pyramid", origin: TAYLORS_CENTER, destination: CAMPUS_STOPS[1] },
-  { label: "Taylor's -> Subang Jaya LRT", origin: TAYLORS_CENTER, destination: CAMPUS_STOPS[3] },
-  { label: "Taylor's -> Bandar Sunway BRT", origin: TAYLORS_CENTER, destination: CAMPUS_STOPS[5] },
-  { label: "DK Senza -> Taylor's", origin: { label: "DK Senza", latitude: 3.0658, longitude: 101.6123 }, destination: TAYLORS_CENTER }
+  { label: "Main Gate -> Sunway Pyramid", origin: CAMPUS_PICKUP_POINTS[1], destination: CAMPUS_STOPS[6] },
+  { label: "Syopz -> Subang Jaya LRT", origin: CAMPUS_PICKUP_POINTS[2], destination: CAMPUS_STOPS[8] },
+  { label: "Student Life -> Bandar Sunway BRT", origin: CAMPUS_PICKUP_POINTS[3], destination: CAMPUS_STOPS[10] },
+  { label: "DK Senza -> Taylor's", origin: CAMPUS_PICKUP_POINTS[6], destination: TAYLORS_CENTER }
 ];
 
 export function haversineDistanceKm(a: Point, b: Point): number {

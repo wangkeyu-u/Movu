@@ -1,6 +1,7 @@
 import type {
   AuditLog,
   Match,
+  Notification,
   Payment,
   RatingReport,
   RideRequest,
@@ -37,6 +38,16 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   return response.json() as Promise<T>;
 }
 
+export function sosSocketUrl(): string | null {
+  const token = authToken.get();
+  if (!token) return null;
+  const url = new URL(API_BASE_URL);
+  url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
+  url.pathname = `${url.pathname.replace(/\/api\/?$/, "")}/ws/admin/sos`;
+  url.search = `token=${encodeURIComponent(token)}`;
+  return url.toString();
+}
+
 export const api = {
   login: (email: string, password: string) =>
     request<{ access_token: string; user: User }>("/auth/login", {
@@ -63,11 +74,17 @@ export const api = {
   matches: () => request<Match[]>("/matches"),
   payments: () => request<Payment[]>("/payments"),
   sosEvents: () => request<SOSEvent[]>("/sos"),
-  updateSos: (id: number, status: string) =>
+  updateSos: (id: number, status: string, response_note?: string) =>
     request<SOSEvent>(`/sos/${id}/status`, {
       method: "PATCH",
-      body: JSON.stringify({ status })
+      body: JSON.stringify({ status, response_note })
     }),
+  notifications: () => request<Notification[]>("/notifications/me"),
+  unreadNotifications: () => request<{ unread_count: number }>("/notifications/me/unread-count"),
+  markNotificationRead: (notificationId: number) =>
+    request<Notification>(`/notifications/${notificationId}/read`, { method: "PATCH" }),
+  markAllNotificationsRead: () =>
+    request<{ unread_count: number }>("/notifications/me/read-all", { method: "PATCH" }),
   reports: () => request<RatingReport[]>("/reports"),
   auditLogs: () => request<AuditLog[]>("/admin/audit-logs")
 };

@@ -15,6 +15,7 @@ from app.schemas.trip import TripRead
 from app.services.location import user_can_view_trip_location
 from app.services.realtime import sos_alert_manager
 from app.services.audit import write_audit_log
+from app.services.notifications import create_notification, notify_admins
 
 
 router = APIRouter(prefix="/sos", tags=["sos"])
@@ -98,6 +99,16 @@ async def create_sos_event(
     db.commit()
     db.refresh(sos_event)
 
+    notify_admins(
+        db,
+        title="New SOS alert",
+        body=f"{current_user.name} triggered SOS for trip #{payload.trip_id}.",
+        category="safety",
+        entity_type="sos_event",
+        entity_id=sos_event.sos_id,
+    )
+    db.commit()
+
     await sos_alert_manager.broadcast(SOSRead.model_validate(sos_event).model_dump(mode="json"))
     return sos_event
 
@@ -153,8 +164,24 @@ def update_sos_status(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="SOS event not found")
 
     sos_event.status = payload.status
+    sos_event.assigned_admin_id = admin_user.user_id
+    sos_event.status_updated_at = utc_now()
+    if payload.response_note is not None:
+        note = payload.response_note.strip()
+        sos_event.response_note = note or None
     if payload.status in {SOSStatus.resolved, SOSStatus.false_alarm}:
         sos_event.resolved_time = utc_now()
+    else:
+        sos_event.resolved_time = None
+    create_notification(
+        db,
+        user_id=sos_event.user_id,
+        title="SOS status updated",
+        body=f"Your SOS event #{sos_event.sos_id} is now {payload.status.value}.",
+        category="safety",
+        entity_type="sos_event",
+        entity_id=sos_event.sos_id,
+    )
     write_audit_log(
         db,
         actor=admin_user,
@@ -162,7 +189,7 @@ def update_sos_status(
         entity_type="sos_event",
         entity_id=sos_event.sos_id,
         request=request,
-        metadata={"status": payload.status.value},
+        metadata={"status": payload.status.value, "response_note": sos_event.response_note},
     )
     db.add(sos_event)
     db.commit()
