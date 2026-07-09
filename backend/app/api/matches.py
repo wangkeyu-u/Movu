@@ -10,6 +10,7 @@ from app.models.trip import Trip
 from app.models.user import User
 from app.schemas.match import MatchRead
 from app.services.matching import recommend_requests_for_trip, recommend_trips_for_request
+from app.services.notifications import create_notification
 
 
 router = APIRouter(prefix="/matches", tags=["matches"])
@@ -136,6 +137,24 @@ def confirm_match(
         other_match.status = MatchStatus.cancelled
         db.add(other_match)
 
+    create_notification(
+        db,
+        user_id=ride_request.rider_id,
+        title="Ride match confirmed",
+        body=f"Your ride request #{ride_request.request_id} is confirmed for trip #{trip.trip_id}.",
+        category="match",
+        entity_type="match",
+        entity_id=match.match_id,
+    )
+    create_notification(
+        db,
+        user_id=trip.driver_id,
+        title="Passenger matched",
+        body=f"Ride request #{ride_request.request_id} joined your trip #{trip.trip_id}.",
+        category="match",
+        entity_type="match",
+        entity_id=match.match_id,
+    )
     db.add_all([match, ride_request, trip])
     db.commit()
     db.refresh(match)
@@ -157,6 +176,15 @@ def reject_match(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Confirmed matches cannot be rejected")
 
     match.status = MatchStatus.rejected
+    create_notification(
+        db,
+        user_id=match.rider_id,
+        title="Match recommendation rejected",
+        body=f"A driver rejected recommendation #{match.match_id}. You can look for another trip.",
+        category="match",
+        entity_type="match",
+        entity_id=match.match_id,
+    )
     db.add(match)
     db.commit()
     db.refresh(match)

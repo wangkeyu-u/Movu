@@ -3,6 +3,7 @@ from datetime import UTC, datetime, timedelta
 from sqlalchemy.orm import Session
 
 from app.models.enums import Gender, MatchStatus, RideRequestStatus, TripStatus, UserRole
+from app.models.audit_log import AuditLog
 from app.models.match import RideMatch
 from app.models.ride_request import RideRequest
 from app.models.trip import Trip
@@ -134,7 +135,7 @@ def test_admin_can_list_and_resolve_sos_event(client, db_session: Session):
     list_response = client.get("/api/sos", headers=auth_headers_for(admin))
     update_response = client.patch(
         f"/api/sos/{sos_id}/status",
-        json={"status": "resolved"},
+        json={"status": "resolved", "response_note": "Called rider and campus security."},
         headers=auth_headers_for(admin),
     )
 
@@ -143,6 +144,11 @@ def test_admin_can_list_and_resolve_sos_event(client, db_session: Session):
     assert update_response.status_code == 200
     assert update_response.json()["status"] == "resolved"
     assert update_response.json()["resolved_time"] is not None
+    assert update_response.json()["assigned_admin_id"] == admin.user_id
+    assert update_response.json()["response_note"] == "Called rider and campus security."
+    assert update_response.json()["status_updated_at"] is not None
+    audit_log = db_session.query(AuditLog).filter(AuditLog.action == "sos.status_updated").one()
+    assert "Called rider" in (audit_log.metadata_json or "")
 
 
 def test_non_admin_cannot_update_sos_status(client, db_session: Session):

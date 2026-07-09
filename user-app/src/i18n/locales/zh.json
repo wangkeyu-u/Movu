@@ -39,6 +39,22 @@
     "useCurrent": "使用当前位置",
     "verify": "验证"
   },
+  "notifications": {
+    "title": "通知",
+    "markAll": "全部标为已读",
+    "empty": "暂无通知",
+    "enableDesktop": "开启桌面提醒",
+    "desktopEnabled": "桌面提醒已开启",
+    "desktopUnsupported": "当前浏览器不支持桌面提醒",
+    "categories": {
+      "verification": "审核",
+      "match": "匹配",
+      "trip": "行程",
+      "safety": "安全",
+      "operations": "运营",
+      "system": "系统"
+    }
+  },
   "nav": {
     "primary": "主导航",
     "home": "首页",
@@ -230,6 +246,7 @@
     "droppedPin": "地图选点",
     "readFailed": "无法读取当前位置。",
     "chooseOnMap": "在地图选择",
+    "campusPickups": "校内上车点",
     "routePresets": "常用路线"
   },
   "safety": {

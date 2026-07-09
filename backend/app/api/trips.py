@@ -4,11 +4,13 @@ from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.core.dependencies import get_current_user, require_approved_roles, require_roles
 from app.db.session import get_db
-from app.models.enums import TripStatus, UserRole
+from app.models.enums import MatchStatus, TripStatus, UserRole
+from app.models.match import RideMatch
 from app.models.trip import Trip
 from app.models.user import User
 from app.schemas.trip import TripCreate, TripRead, TripStatusUpdate
 from app.services.maps import validate_route_inside_service_area
+from app.services.notifications import create_notifications
 from app.services.vehicles import get_driver_max_approved_seats
 
 
@@ -115,6 +117,22 @@ def update_trip_status(
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Insufficient role")
 
     trip.status = payload.status
+    confirmed_rider_ids = [
+        row.rider_id
+        for row in db.query(RideMatch.rider_id)
+        .filter(RideMatch.trip_id == trip.trip_id, RideMatch.status == MatchStatus.confirmed)
+        .all()
+    ]
+    if confirmed_rider_ids:
+        create_notifications(
+            db,
+            user_ids=confirmed_rider_ids,
+            title="Trip status updated",
+            body=f"Trip #{trip.trip_id} is now {payload.status.value}.",
+            category="trip",
+            entity_type="trip",
+            entity_id=trip.trip_id,
+        )
     db.add(trip)
     db.commit()
     db.refresh(trip)

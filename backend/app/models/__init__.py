@@ -1,6 +1,8 @@
+from app.models.base import Base
 from app.models.audit_log import AuditLog
 from app.models.location_log import LocationLog
 from app.models.match import RideMatch
+from app.models.notification import Notification
 from app.models.payment import Payment
 from app.models.rating_report import RatingReport
 from app.models.ride_request import RideRequest
@@ -11,7 +13,9 @@ from app.models.user import User
 from app.models.vehicle import Vehicle
 
 __all__ = [
+    "Base",
     "LocationLog",
+    "Notification",
     "AuditLog",
     "Payment",
     "RatingReport",

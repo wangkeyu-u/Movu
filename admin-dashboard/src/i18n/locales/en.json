@@ -21,8 +21,32 @@
     "status": "Status",
     "createdAt": "Created",
     "language": "Language",
+    "notifications": "Notifications",
+    "searchRecords": "Search records",
+    "showingRecords": "Showing {{shown}} of {{total}}",
+    "noSearchResults": "No records match that search",
+    "previous": "Previous",
+    "next": "Next",
+    "pageStatus": "Page {{page}} of {{pages}}",
+    "exportCsv": "Export CSV",
     "save": "Save",
     "cancel": "Cancel"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAll": "Mark all read",
+    "empty": "No notifications yet",
+    "enableDesktop": "Enable desktop alerts",
+    "desktopEnabled": "Desktop alerts enabled",
+    "desktopUnsupported": "Desktop alerts unavailable",
+    "categories": {
+      "verification": "Verification",
+      "match": "Match",
+      "trip": "Trip",
+      "safety": "Safety",
+      "operations": "Operations",
+      "system": "System"
+    }
   },
   "login": {
     "title": "Admin login",
@@ -122,7 +146,15 @@
     "trip": "Trip",
     "location": "Location",
     "triggered": "Triggered",
-    "resolved": "Resolved"
+    "resolved": "Resolved",
+    "liveAlert": "Live SOS alert",
+    "liveAlertBody": "Trip #{{tripId}}, user #{{userId}} needs review now.",
+    "openMap": "Open map",
+    "assigned": "Assigned",
+    "timeline": "Response",
+    "responseNote": "Response note",
+    "notePlaceholder": "Add response note",
+    "noResponseNote": "No response note yet"
   },
   "reports": {
     "title": "Ratings and reports",

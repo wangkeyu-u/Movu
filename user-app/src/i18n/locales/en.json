@@ -39,6 +39,22 @@
     "useCurrent": "Use current",
     "verify": "Verify"
   },
+  "notifications": {
+    "title": "Notifications",
+    "markAll": "Mark all read",
+    "empty": "No notifications yet",
+    "enableDesktop": "Enable desktop alerts",
+    "desktopEnabled": "Desktop alerts enabled",
+    "desktopUnsupported": "Desktop alerts unavailable",
+    "categories": {
+      "verification": "Verification",
+      "match": "Match",
+      "trip": "Trip",
+      "safety": "Safety",
+      "operations": "Operations",
+      "system": "System"
+    }
+  },
   "nav": {
     "primary": "Primary",
     "home": "Home",
@@ -230,6 +246,7 @@
     "droppedPin": "Dropped pin",
     "readFailed": "Could not read current location.",
     "chooseOnMap": "Choose on map",
+    "campusPickups": "Campus pickup points",
     "routePresets": "Route presets"
   },
   "safety": {

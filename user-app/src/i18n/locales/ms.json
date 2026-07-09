@@ -39,6 +39,22 @@
     "useCurrent": "Guna lokasi semasa",
     "verify": "Sahkan"
   },
+  "notifications": {
+    "title": "Notifikasi",
+    "markAll": "Tanda semua dibaca",
+    "empty": "Tiada notifikasi lagi",
+    "enableDesktop": "Aktifkan amaran desktop",
+    "desktopEnabled": "Amaran desktop aktif",
+    "desktopUnsupported": "Amaran desktop tidak tersedia",
+    "categories": {
+      "verification": "Pengesahan",
+      "match": "Padanan",
+      "trip": "Perjalanan",
+      "safety": "Keselamatan",
+      "operations": "Operasi",
+      "system": "Sistem"
+    }
+  },
   "nav": {
     "primary": "Utama",
     "home": "Laman",
@@ -230,6 +246,7 @@
     "droppedPin": "Pin diletakkan",
     "readFailed": "Tidak dapat membaca lokasi semasa.",
     "chooseOnMap": "Pilih pada peta",
+    "campusPickups": "Titik naik kampus",
     "routePresets": "Laluan tetap"
   },
   "safety": {

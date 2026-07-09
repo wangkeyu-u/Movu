@@ -36,7 +36,8 @@ class User(Base):
     trips = relationship("Trip", back_populates="driver", cascade="all, delete-orphan")
     payments = relationship("Payment", back_populates="payer")
     location_logs = relationship("LocationLog", back_populates="user")
-    sos_events = relationship("SOSEvent", back_populates="user")
+    sos_events = relationship("SOSEvent", foreign_keys="SOSEvent.user_id", back_populates="user")
+    notifications = relationship("Notification", back_populates="user", cascade="all, delete-orphan")
     ratings_given = relationship(
         "RatingReport",
         foreign_keys="RatingReport.from_user_id",
