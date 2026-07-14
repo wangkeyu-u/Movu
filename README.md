@@ -1,3 +1,22 @@
+# Movu — 校园拼车平台 / Campus Carpooling
+
+> 泰勒大学校园拼车平台 —— 身份验证、路线匹配、实时位置、SOS 安全告警、管理后台。
+>
+> A campus carpooling platform for Taylor's University — verified riders and drivers, route matching, live location, SOS alerts, and admin tools.
+
+[![Backend](https://img.shields.io/badge/Backend-FastAPI-009688)](https://fastapi.tiangolo.com/)
+[![Frontend](https://img.shields.io/badge/Frontend-React%20%2B%20TS-61DAFB)](https://react.dev/)
+[![Database](https://img.shields.io/badge/Database-MySQL-4479A1)](https://www.mysql.com/)
+[![Deploy](https://img.shields.io/badge/Deploy-Docker%20Compose-2496ED)](https://docs.docker.com/compose/)
+
+---
+
+## 项目简介（中文）
+
+Movu 是一个面向校园场景的拼车平台，核心能力包括：身份验证（学生/司机）、路线匹配算法（基于路线插入的拼车匹配）、WebSocket 实时位置追踪、SOS 安全告警、评分举报、审计日志和管理后台。前端包含用户 App（PWA）和管理后台，支持英文、简体中文和马来语三语切换。
+
+---
+
 # MovU Carpooling
 
 ![MovU hero](docs/assets/readme-hero.png)
