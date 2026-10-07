@@ -4,7 +4,7 @@ This document maps the original capstone requirements to the current MovU implem
 
 ## Scope Position
 
-MovU is implemented as a production-ready campus carpooling platform for Taylor's University. The current build includes backend APIs, admin dashboard, user web app/PWA, Docker deployment files, production configuration guards, and test coverage. Payment collection is disabled until an approved provider is configured; simulated payment remains local/test-only and is blocked in production.
+MovU implements a campus carpooling prototype with production configuration guards for Taylor's University. The current build includes backend APIs, admin dashboard, user web app/PWA, Docker deployment files, production configuration guards, and test coverage. Payment collection is disabled until an approved provider is configured; simulated payment remains local/test-only and is blocked in production.
 
 ## Requirement Coverage
 
@@ -32,7 +32,7 @@ MovU is implemented as a production-ready campus carpooling platform for Taylor'
 | 20 | Clean project structure | Done | `backend/`, `admin-dashboard/`, `user-app/`, `packages/ui/`, Docker files | File tree, builds |
 | 21 | Seed data | Done | `backend/app/db/seed.py` | Seed smoke with record counts |
 | 22 | Simple tests | Done | `backend/tests/*`, `e2e/movu-flow.spec.ts` | `PYTHONPATH=backend .venv/bin/pytest backend/tests -q`, `npm run e2e` |
-| 23 | README | Done | `README.md`, `PRODUCT.md` | Manual review |
+| 23 | README | Done | `README.md`, `docs/architecture.md` | Manual review |
 | 24 | Docker deployment | Done | `docker-compose.yml`, `docker-compose.prod.yml`, `backend/Dockerfile`, frontend Dockerfiles, `DEPLOYMENT.md` | `docker compose config`, `docker compose build`, `docker compose up -d`, health checks |
 | 25 | Taylor's University 30km operating area | Done | `backend/app/core/config.py`, `backend/app/services/maps.py`, `user-app/src/components/CampusMapPicker.tsx`, `user-app/src/utils/geo.ts` | Backend tests and user app build |
 | 26 | Shared UI component rule | Done | `packages/ui/src/components/*`, `scripts/check-ui-usage.mjs`, `CONTRIBUTING.md` | `npm run ui:check` |
